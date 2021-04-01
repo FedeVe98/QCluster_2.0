@@ -1,0 +1,13 @@
+1. Code
+Modificare struttura dati (UnorederMap)
+Modificare fase accesso alla struttura dati (possibilità di non trovare corrispondenza tra le due Map dei reads) : scan un vettore e confronto con il secondo, controllo 
+No segmentation fault
+
+2. Presentazione processo e risultati
+
+3. Report 
+-setup
+-idea
+-implementazione
+-test: confronto tra le due versioni di qcluster con dataset input (vedi repository) al crescere di K (lunghezza kmers) : aumento uso memoria
+-risultati e dati (possibile miglioramento anche complessità temporale)
