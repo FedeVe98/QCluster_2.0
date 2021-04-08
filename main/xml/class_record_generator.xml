@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="class_record_generator" kind="class" language="C++" prot="public">
+    <compoundname>RecordGenerator</compoundname>
+    <includes refid="seqio_8hh" local="no">seqio.hh</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_record_generator_1a09cc8fea4b494266f26ce60a0207640f" prot="private" static="no" mutable="no">
+        <type>ifstream</type>
+        <definition>ifstream RecordGenerator::ifs</definition>
+        <argsstring></argsstring>
+        <name>ifs</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="37" column="10" bodyfile="seqio.hh" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_record_generator_1ad5f9a4d47b420451b35c83942375e3fc" prot="private" static="no" mutable="no">
+        <type>string</type>
+        <definition>string RecordGenerator::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="41" column="8" bodyfile="seqio.hh" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_record_generator_1a0cb2cb8786a4299d9accfa174fb34a85" prot="private" static="no" mutable="no">
+        <type>string</type>
+        <definition>string RecordGenerator::desc</definition>
+        <argsstring></argsstring>
+        <name>desc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="41" column="11" bodyfile="seqio.hh" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_record_generator_1ab71ad9e83fd7894ac69e3395052d0215" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool RecordGenerator::is_good</definition>
+        <argsstring></argsstring>
+        <name>is_good</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="42" column="6" bodyfile="seqio.hh" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_record_generator_1a0e8cb8f992088e6c680c4eacddcd07a9" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int RecordGenerator::indice_riga</definition>
+        <argsstring></argsstring>
+        <name>indice_riga</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="43" column="5" bodyfile="seqio.hh" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_record_generator_1acdfc41e1d8950f1087b94f286ba24d5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RecordGenerator::RecordGenerator</definition>
+        <argsstring>(string)</argsstring>
+        <name>RecordGenerator</name>
+        <param>
+          <type>string</type>
+          <defname>fname</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="45" column="1" bodyfile="seqio.cc" bodystart="188" bodyend="190"/>
+      </memberdef>
+      <memberdef kind="function" id="class_record_generator_1a6efedfcbb711753b2ab7023caaf601b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>RecordGenerator::~RecordGenerator</definition>
+        <argsstring>()</argsstring>
+        <name>~RecordGenerator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="46" column="1" bodyfile="seqio.cc" bodystart="192" bodyend="193"/>
+      </memberdef>
+      <memberdef kind="function" id="class_record_generator_1a245d2a85e9378f099723b39d3bffefea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool RecordGenerator::good</definition>
+        <argsstring>()</argsstring>
+        <name>good</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="47" column="6" bodyfile="seqio.cc" bodystart="231" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="class_record_generator_1a90b8e5eeb76b807d7e7e9d84aa28938d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_seq_record" kindref="compound">SeqRecord</ref></type>
+        <definition>SeqRecord RecordGenerator::next</definition>
+        <argsstring>()</argsstring>
+        <name>next</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="49" column="11" bodyfile="seqio.cc" bodystart="195" bodyend="229"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="seqio.hh" line="34" column="1" bodyfile="seqio.hh" bodystart="35" bodyend="50"/>
+    <listofallmembers>
+      <member refid="class_record_generator_1a0cb2cb8786a4299d9accfa174fb34a85" prot="private" virt="non-virtual"><scope>RecordGenerator</scope><name>desc</name></member>
+      <member refid="class_record_generator_1a245d2a85e9378f099723b39d3bffefea" prot="public" virt="non-virtual"><scope>RecordGenerator</scope><name>good</name></member>
+      <member refid="class_record_generator_1ad5f9a4d47b420451b35c83942375e3fc" prot="private" virt="non-virtual"><scope>RecordGenerator</scope><name>id</name></member>
+      <member refid="class_record_generator_1a09cc8fea4b494266f26ce60a0207640f" prot="private" virt="non-virtual"><scope>RecordGenerator</scope><name>ifs</name></member>
+      <member refid="class_record_generator_1a0e8cb8f992088e6c680c4eacddcd07a9" prot="private" virt="non-virtual"><scope>RecordGenerator</scope><name>indice_riga</name></member>
+      <member refid="class_record_generator_1ab71ad9e83fd7894ac69e3395052d0215" prot="private" virt="non-virtual"><scope>RecordGenerator</scope><name>is_good</name></member>
+      <member refid="class_record_generator_1a90b8e5eeb76b807d7e7e9d84aa28938d" prot="public" virt="non-virtual"><scope>RecordGenerator</scope><name>next</name></member>
+      <member refid="class_record_generator_1acdfc41e1d8950f1087b94f286ba24d5c" prot="public" virt="non-virtual"><scope>RecordGenerator</scope><name>RecordGenerator</name></member>
+      <member refid="class_record_generator_1a6efedfcbb711753b2ab7023caaf601b8" prot="public" virt="non-virtual"><scope>RecordGenerator</scope><name>~RecordGenerator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

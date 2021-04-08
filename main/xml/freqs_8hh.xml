@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="freqs_8hh" kind="file" language="C++">
+    <compoundname>freqs.hh</compoundname>
+    <includes local="no">string</includes>
+    <includes local="no">vector</includes>
+    <includedby refid="em_8cc" local="yes">em.cc</includedby>
+    <includedby refid="freqs_8cc" local="yes">freqs.cc</includedby>
+    <includedby refid="qcluster_8cc" local="yes">qcluster.cc</includedby>
+    <incdepgraph>
+      <node id="2">
+        <label>string</label>
+      </node>
+      <node id="3">
+        <label>vector</label>
+      </node>
+      <node id="1">
+        <label>freqs.hh</label>
+        <link refid="freqs_8hh"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3">
+        <label>freqs.cc</label>
+        <link refid="freqs_8cc"/>
+      </node>
+      <node id="2">
+        <label>em.cc</label>
+        <link refid="em_8cc"/>
+      </node>
+      <node id="4">
+        <label>qcluster.cc</label>
+        <link refid="qcluster_8cc"/>
+      </node>
+      <node id="1">
+        <label>freqs.hh</label>
+        <link refid="freqs_8hh"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="freqs_8hh_1a06fc87d81c62e9abb8790b6e5713c55b" prot="public" static="no" strong="no">
+        <type></type>
+        <name>@0</name>
+        <enumvalue id="freqs_8hh_1a06fc87d81c62e9abb8790b6e5713c55ba548f73cd51faea0f0f40417bcac362c7" prot="public">
+          <name>NUM_NT</name>
+          <initializer>= 4</initializer>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="11" column="1" bodyfile="freqs.hh" bodystart="11" bodyend="11"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="freqs_8hh_1a152f59e9d7d80cef49ff0a2c3e9412f6" prot="public" static="no" mutable="no">
+        <type>char const</type>
+        <definition>char const base</definition>
+        <argsstring></argsstring>
+        <name>base</name>
+        <initializer>=&apos;!&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="9" column="12" bodyfile="freqs.hh" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="freqs_8hh_1a416664d8eb7e6120b28139eb2776053b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void normalize_row</definition>
+        <argsstring>(double *fv, int L)</argsstring>
+        <name>normalize_row</name>
+        <param>
+          <type>double *</type>
+          <declname>fv</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="14" column="6" bodyfile="freqs.cc" bodystart="49" bodyend="59" declfile="freqs.hh" declline="14" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="freqs_8hh_1aaf0ab23be119e7326d871b709bb6d2ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void fill_overlap_count_vector</definition>
+        <argsstring>(string seq, string qual, int K, double *freq_vector, double *quality, int normalize=2, double pc=1, double *avg_quality_1=NULL, double **avg_quality=NULL, double *freq_1=NULL, bool redistribute=true)</argsstring>
+        <name>fill_overlap_count_vector</name>
+        <param>
+          <type>string</type>
+          <declname>seq</declname>
+        </param>
+        <param>
+          <type>string</type>
+          <declname>qual</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>K</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>freq_vector</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>quality</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>normalize</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>pc</declname>
+          <defval>1</defval>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>avg_quality_1</declname>
+          <defval>NULL</defval>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>avg_quality</declname>
+          <defval>NULL</defval>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>freq_1</declname>
+          <defval>NULL</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>redistribute</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="16" column="6" bodyfile="freqs.cc" bodystart="92" bodyend="212" declfile="freqs.hh" declline="16" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="freqs_8hh_1a118a12ecdab07fb26d8367027dea9000" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void calculate_quality_expected_value</definition>
+        <argsstring>(int method, int N, int K, int L, double **freq, double **quality, double **freq_1, double *avg_quality_1, double **avg_quality, double *expected_qual)</argsstring>
+        <name>calculate_quality_expected_value</name>
+        <param>
+          <type>int</type>
+          <declname>method</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>N</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>K</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>freq</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>quality</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>freq_1</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>avg_quality_1</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>avg_quality</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>expected_qual</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Function responsible for the calculation of the quality expected value for each k-word: the expected value is computed basing on the full dataset. Refer to the documentation for the description of the possible methods. Default method: E1 </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="25" column="6" bodyfile="freqs.cc" bodystart="221" bodyend="290" declfile="freqs.hh" declline="25" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="freqs_8hh_1a65286b8ddb69c13f7362cd029c38fae1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void expected_frequency_p2global</definition>
+        <argsstring>(int N, int K, int L, double *expected_freq, double **freq_1)</argsstring>
+        <name>expected_frequency_p2global</name>
+        <param>
+          <type>int</type>
+          <declname>N</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>K</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>expected_freq</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>freq_1</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="29" column="6" bodyfile="freqs.cc" bodystart="293" bodyend="321" declfile="freqs.hh" declline="29" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="freqs_8hh_1aaec7cd4b9e7b327d1280b3418389810d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void expected_frequency_p1global</definition>
+        <argsstring>(int N, int K, int L, double *expected_freq, double **freq)</argsstring>
+        <name>expected_frequency_p1global</name>
+        <param>
+          <type>int</type>
+          <declname>N</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>K</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>L</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>expected_freq</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>freq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="32" column="6" bodyfile="freqs.cc" bodystart="324" bodyend="338" declfile="freqs.hh" declline="32" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="freqs_8hh_1adfdbba68e94d9333eafea28a3c116cb1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void normalize_freq_matrix</definition>
+        <argsstring>(double **data, double **qual, int N, int row_length)</argsstring>
+        <name>normalize_freq_matrix</name>
+        <param>
+          <type>double **</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>qual</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>N</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>row_length</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="freqs.hh" line="36" column="6" bodyfile="freqs.cc" bodystart="341" bodyend="369" declfile="freqs.hh" declline="36" declcolumn="6"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">std;</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>number<sp/>of<sp/>characters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9" refid="freqs_8hh_1a152f59e9d7d80cef49ff0a2c3e9412f6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1a152f59e9d7d80cef49ff0a2c3e9412f6" kindref="member">base</ref><sp/>=</highlight><highlight class="charliteral">&apos;!&apos;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>Illumina<sp/>1.8+<sp/>Phred+33</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="freqs_8hh_1a06fc87d81c62e9abb8790b6e5713c55ba548f73cd51faea0f0f40417bcac362c7" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">enum</highlight><highlight class="normal"><sp/>{<ref refid="freqs_8hh_1a06fc87d81c62e9abb8790b6e5713c55ba548f73cd51faea0f0f40417bcac362c7" kindref="member">NUM_NT</ref><sp/>=<sp/>4};</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/>normalize<sp/>row<sp/>dividing<sp/>by<sp/>the<sp/>total<sp/>counts</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1a416664d8eb7e6120b28139eb2776053b" kindref="member">normalize_row</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>fv,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1aaf0ab23be119e7326d871b709bb6d2ac" kindref="member">fill_overlap_count_vector</ref>(</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>seq,<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>qual,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>K,<sp/></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>freq_vector,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*quality,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>normalize=2,<sp/></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>pc=1,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*avg_quality_1=NULL,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**avg_quality<sp/>=<sp/>NULL,<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*freq_1<sp/>=<sp/>NULL,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>redistribute<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1a118a12ecdab07fb26d8367027dea9000" kindref="member">calculate_quality_expected_value</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>method,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>K,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L,<sp/></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**freq,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**quality,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**freq_1,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>avg_quality_1,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**avg_quality,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*expected_qual);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1a65286b8ddb69c13f7362cd029c38fae1" kindref="member">expected_frequency_p2global</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>K,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*expected_freq,</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**freq_1);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1aaec7cd4b9e7b327d1280b3418389810d" kindref="member">expected_frequency_p1global</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>K,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*expected_freq,</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**freq);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>normalize<sp/>frequency<sp/>matrix<sp/>to<sp/>make<sp/>its<sp/>columns<sp/>univariant</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="freqs_8hh_1adfdbba68e94d9333eafea28a3c116cb1" kindref="member">normalize_freq_matrix</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>data,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>qual,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>N,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>row_length);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="freqs.hh"/>
+  </compounddef>
+</doxygen>

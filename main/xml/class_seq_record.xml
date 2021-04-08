@@ -1,0 +1,234 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="class_seq_record" kind="class" language="C++" prot="public">
+    <compoundname>SeqRecord</compoundname>
+    <includes refid="seqio_8hh" local="no">seqio.hh</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_seq_record_1a10eca16bd7d13074a89caed0bf3fca2f" prot="private" static="no" mutable="no">
+        <type>string</type>
+        <definition>string SeqRecord::header</definition>
+        <argsstring></argsstring>
+        <name>header</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="15" column="8" bodyfile="seqio.hh" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_seq_record_1abe7c49f537e5762f21b8876bacf4d388" prot="private" static="no" mutable="no">
+        <type>string</type>
+        <definition>string SeqRecord::description</definition>
+        <argsstring></argsstring>
+        <name>description</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="15" column="15" bodyfile="seqio.hh" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_seq_record_1a6975d4a52d424dafc8a0573d09df84c9" prot="private" static="no" mutable="no">
+        <type>string</type>
+        <definition>string SeqRecord::sequence</definition>
+        <argsstring></argsstring>
+        <name>sequence</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="15" column="27" bodyfile="seqio.hh" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_seq_record_1aba71314e8e53dea61e05c738859f4854" prot="private" static="no" mutable="no">
+        <type>string</type>
+        <definition>string SeqRecord::quality</definition>
+        <argsstring></argsstring>
+        <name>quality</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="15" column="36" bodyfile="seqio.hh" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_seq_record_1aed05717dc7be380b0ca151d0fdb3ca57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SeqRecord::SeqRecord</definition>
+        <argsstring>(const SeqRecord &amp;)</argsstring>
+        <name>SeqRecord</name>
+        <param>
+          <type>const <ref refid="class_seq_record" kindref="compound">SeqRecord</ref> &amp;</type>
+          <defname>rec</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="17" column="1" bodyfile="seqio.cc" bodystart="157" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a2e053494ed2dd7d650c0de1c767160aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SeqRecord::SeqRecord</definition>
+        <argsstring>(string, string, string, string)</argsstring>
+        <name>SeqRecord</name>
+        <param>
+          <type>string</type>
+          <defname>name</defname>
+        </param>
+        <param>
+          <type>string</type>
+          <defname>desc</defname>
+        </param>
+        <param>
+          <type>string</type>
+          <defname>seq</defname>
+        </param>
+        <param>
+          <type>string</type>
+          <defname>qual</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="18" column="1" bodyfile="seqio.cc" bodystart="161" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1aefd64fe5f8583d734b71607f43efd545" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>SeqRecord::~SeqRecord</definition>
+        <argsstring>()</argsstring>
+        <name>~SeqRecord</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="19" column="1" bodyfile="seqio.cc" bodystart="165" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a6cad403bdab836d931ba2fb95fcc973e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string SeqRecord::seq</definition>
+        <argsstring>() const</argsstring>
+        <name>seq</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="20" column="8" bodyfile="seqio.hh" bodystart="20" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a266a886b3317c518012780e72d8348a8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string SeqRecord::id</definition>
+        <argsstring>() const</argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="21" column="8" bodyfile="seqio.hh" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a24653b4233a29f4a5205781ad241434c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string SeqRecord::desc</definition>
+        <argsstring>() const</argsstring>
+        <name>desc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="22" column="8" bodyfile="seqio.hh" bodystart="22" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a520b53946f1febd09a3a07f0a488e913" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>string</type>
+        <definition>string SeqRecord::qual</definition>
+        <argsstring>() const</argsstring>
+        <name>qual</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="23" column="8" bodyfile="seqio.hh" bodystart="23" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a19be9715b87cfc68bd920a352af5b7d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int SeqRecord::length</definition>
+        <argsstring>() const</argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="24" column="5" bodyfile="seqio.hh" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1aa2c38b32800a481570f7e13404271b87" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_seq_record" kindref="compound">SeqRecord</ref></type>
+        <definition>SeqRecord SeqRecord::toupper</definition>
+        <argsstring>() const</argsstring>
+        <name>toupper</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="25" column="11" bodyfile="seqio.cc" bodystart="168" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="class_seq_record_1a5c8a517285d45d343a3ea07ad35df918" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="class_seq_record" kindref="compound">SeqRecord</ref></type>
+        <definition>SeqRecord SeqRecord::rc</definition>
+        <argsstring>() const</argsstring>
+        <name>rc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="seqio.hh" line="26" column="11" bodyfile="seqio.cc" bodystart="180" bodyend="183"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="seqio.hh" line="12" column="1" bodyfile="seqio.hh" bodystart="13" bodyend="27"/>
+    <listofallmembers>
+      <member refid="class_seq_record_1a24653b4233a29f4a5205781ad241434c" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>desc</name></member>
+      <member refid="class_seq_record_1abe7c49f537e5762f21b8876bacf4d388" prot="private" virt="non-virtual"><scope>SeqRecord</scope><name>description</name></member>
+      <member refid="class_seq_record_1a10eca16bd7d13074a89caed0bf3fca2f" prot="private" virt="non-virtual"><scope>SeqRecord</scope><name>header</name></member>
+      <member refid="class_seq_record_1a266a886b3317c518012780e72d8348a8" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>id</name></member>
+      <member refid="class_seq_record_1a19be9715b87cfc68bd920a352af5b7d0" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>length</name></member>
+      <member refid="class_seq_record_1a520b53946f1febd09a3a07f0a488e913" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>qual</name></member>
+      <member refid="class_seq_record_1aba71314e8e53dea61e05c738859f4854" prot="private" virt="non-virtual"><scope>SeqRecord</scope><name>quality</name></member>
+      <member refid="class_seq_record_1a5c8a517285d45d343a3ea07ad35df918" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>rc</name></member>
+      <member refid="class_seq_record_1a6cad403bdab836d931ba2fb95fcc973e" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>seq</name></member>
+      <member refid="class_seq_record_1aed05717dc7be380b0ca151d0fdb3ca57" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>SeqRecord</name></member>
+      <member refid="class_seq_record_1a2e053494ed2dd7d650c0de1c767160aa" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>SeqRecord</name></member>
+      <member refid="class_seq_record_1a6975d4a52d424dafc8a0573d09df84c9" prot="private" virt="non-virtual"><scope>SeqRecord</scope><name>sequence</name></member>
+      <member refid="class_seq_record_1aa2c38b32800a481570f7e13404271b87" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>toupper</name></member>
+      <member refid="class_seq_record_1aefd64fe5f8583d734b71607f43efd545" prot="public" virt="non-virtual"><scope>SeqRecord</scope><name>~SeqRecord</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
