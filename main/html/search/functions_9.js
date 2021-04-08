@@ -1,6 +1,0 @@
-var searchData=
-[
-  ['main_98',['main',['../qcluster_8cc.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'qcluster.cc']]],
-  ['mean_5fcentroid_99',['mean_centroid',['../centroid_8cc.html#a9512c5647a7181cf4563047c97045509',1,'mean_centroid(int N, int row_length, double **freq, int num_nt, double **freq_1, double *centroid, double *centroid_tilde, double **quality, double *expected_qual, double **quality_1, double *expected_freq):&#160;centroid.cc'],['../centroid_8hh.html#a9512c5647a7181cf4563047c97045509',1,'mean_centroid(int N, int row_length, double **freq, int num_nt, double **freq_1, double *centroid, double *centroid_tilde, double **quality, double *expected_qual, double **quality_1, double *expected_freq):&#160;centroid.cc']]],
-  ['mm_5fcentroid_100',['mm_centroid',['../centroid_8cc.html#a1d4ca9c288615493756419f13532ae2f',1,'mm_centroid(int N, int row_length, double **freq, const int num_nt, double **freq_1, double *centroid, double *centroid_tilde, double **quality, double *expected_qual, double **quality_1, double *expected_freq):&#160;centroid.cc'],['../centroid_8hh.html#a1d4ca9c288615493756419f13532ae2f',1,'mm_centroid(int N, int row_length, double **freq, const int num_nt, double **freq_1, double *centroid, double *centroid_tilde, double **quality, double *expected_qual, double **quality_1, double *expected_freq):&#160;centroid.cc']]]
-];

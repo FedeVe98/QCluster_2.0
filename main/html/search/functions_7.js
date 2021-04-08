@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['kl_5fcentroid_95',['kl_centroid',['../centroid_8cc.html#a886a7f10a61a81226aa15fea14bda705',1,'kl_centroid(int N, int row_length, double **freq, int num_nt, double **freq_1, double *centroid, double *centroid_tilde, double **quality, double *expected_qual, double **quality_1, double *expected_freq):&#160;centroid.cc'],['../centroid_8hh.html#a886a7f10a61a81226aa15fea14bda705',1,'kl_centroid(int N, int row_length, double **freq, int num_nt, double **freq_1, double *centroid, double *centroid_tilde, double **quality, double *expected_qual, double **quality_1, double *expected_freq):&#160;centroid.cc']]],
-  ['kl_5fdistance_96',['kl_distance',['../dists_8cc.html#a3d1ffccf3625a93e381d35891af1b178',1,'kl_distance(double *centroid, double *p, int L, double *centroid_tilde, double *quality, double *expected_qual, double *expected_freq):&#160;dists.cc'],['../dists_8hh.html#ac061464ed33d9a2617f2459e59e0803c',1,'kl_distance(double *q, double *p, int L, double *centroid_tilde, double *quality, double *expected_qual, double *expected_freq):&#160;dists.cc']]]
-];
