@@ -192,6 +192,7 @@ int main(int argc, char **argv)
 	}
 
 	// read sequences and build count matrix
+	//MODIFY
 	RecordGenerator rec_gen(fastq_file_name);
 	double **freq = new double*[N];
 	freq[0] = new double[N * L];
@@ -215,6 +216,7 @@ int main(int argc, char **argv)
 	}
 	
 	//For each read we count the number of kmers
+	//inserimento 
 	for(int i=0; i<N; ++i){
 		SeqRecord rec = rec_gen.next();
 		string seq = rc_flag ? rec.seq() + rec.rc().seq() : rec.seq();
