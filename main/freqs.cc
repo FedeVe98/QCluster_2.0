@@ -99,36 +99,22 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 	int *qual = new int[K];
 	double *prob = new double[K];
 	double *freq_bases = new double[NUM_NT];
-	
-	//If K==1, freq_1 is NULL and freq_bases is initialized to 1/4 for each base
-	if (K==1){
-		for (int i=0; i<NUM_NT; i++) freq_bases[i] = 1.0/4.0;
-	}//Otherwise, freq_bases is the normalization of freq_1
-	else{
-		double somma =0;
-		for (int i=0; i<NUM_NT; i++) somma += freq_1[i];
-		for (int i=0; i<NUM_NT; i++) freq_bases[i] = freq_1[i]/somma;
-	}
-	
+
+
 	double readqual=1;
 	for(int i=0; i<L; ++i){
 		seq[i] = toupper(seq[i]);
 	}
-	int N = 1;  // number of K-mers
-	for(int k=0; k<K; ++k){
-		N *= NUM_NT;
-	}
-	for(int i=0; i<N; ++i){
-		freq[i] = pc;  // initialize with the pseudocount
-		quality_vector[i] = pc;
-	}
+
 	bool valid_kmer = true;
 	int index_kmer = 0;
-	
+	string kmer_string;
+
 	for (int i=0; i<L-K+1; i++){
 		valid_kmer = true;
 		index_kmer = 0;
 		readqual = 1;
+
 		//Fill the kmer, qual and prob vectors
 		for (int j=0; j<K; j++){
 			if (!is_valid_nt(seq[i+j])){
@@ -136,6 +122,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 					break;
 				}
 			kmer[j] = nt2int(seq[i+j]);
+			kmer_string = seq[i+j];
 			qual[j] = int(seq_qual[i+j])-base;
 			prob[j] = (1.0 - pow(10.0,-(qual[j])/10.0));
 			readqual *= prob[j];
@@ -143,9 +130,15 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 			index_kmer = NUM_NT*index_kmer + kmer[j];
 		}
 
+
 		if (!valid_kmer) continue;
 
-		freq[index_kmer] += 1;
+		if(freq.find(kmer_string) == freq.end())
+			freq.insert(make_pair(kmer_string, pc));
+		else
+			freq[kmer_string] += 1;
+		//freq[index_kmer] += 1;
+
 		quality_vector[index_kmer] += readqual;
 		
 		if (avg_quality != NULL)
@@ -184,6 +177,27 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 			prob[j] = original_prob;
 		}
 	}
+
+
+	// INIZIALIZZARE CON LUNGHEZZA UNORDERED MAP
+	int N = 1;  // number of K-mers
+	for(int k=0; k<K; ++k){
+		N *= NUM_NT;
+	}
+
+	
+	// ??????????????????????????????????????????????????????????
+	//If K==1, freq_1 is NULL and freq_bases is initialized to 1/4 for each base
+	if (K==1){
+		for (int i=0; i<NUM_NT; i++) freq_bases[i] = 1.0/4.0;
+	}//Otherwise, freq_bases is the normalization of freq_1
+	else{
+		double somma =0;
+		for (int i=0; i<NUM_NT; i++) somma += freq_1[i];
+		for (int i=0; i<NUM_NT; i++) freq_bases[i] = freq_1[i]/somma;
+	}
+	// ??????????????????????????????????????????????????????????
+	
 	
 	
 	switch(normalize){

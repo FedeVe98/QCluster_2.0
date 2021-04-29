@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <unordered_map>
 #include "seqio.hh"
 #include "freqs.hh"
 #include "em.hh"
@@ -195,12 +196,14 @@ int main(int argc, char **argv)
 	//MODIFY
 	RecordGenerator rec_gen(fastq_file_name);
 	double **freq = new double*[N];
-	freq[0] = new double[N * L];
+	//freq[0] = new double[N * L];
+	freq[0] = new unordered_map<string, double>;
 	double **quality = new double*[N];
 	for (int i=0; i<N; i++) quality[i] = new double[L];
 	
 	double **freq_1  = new double*[N];
-	freq_1[0] = new double[N * NUM_NT];
+	//freq_1[0] = new double[N * NUM_NT];
+	freq_1[0] = new unordered_map<string, double[NUM_NT]>;
 	double **quality_1 = new double*[N];
 	for (int i=0; i<N; i++) quality_1[i] = new double[NUM_NT];
 	
@@ -220,10 +223,12 @@ int main(int argc, char **argv)
 	for(int i=0; i<N; ++i){
 		SeqRecord rec = rec_gen.next();
 		string seq = rc_flag ? rec.seq() + rec.rc().seq() : rec.seq();
-		freq[i] = freq[0] + i*L;
+		//freq[i] = freq[0] + i*L;
+		freq[i] = new unordered_map<string, double>;
 
 		//Calculate frequencies of individual bases
-		freq_1[i] = freq_1[0] + i*NUM_NT;
+		//freq_1[i] = freq_1[0] + i*NUM_NT;
+		freq_1[i] = new unordered_map<string, double[NUM_NT]>;
 		fill_overlap_count_vector(seq, rec.qual(), 1, freq_1[i], 
 								  quality_1[i], false, pseudocount, 
 								  avg_quality_1, NULL, NULL, false);
