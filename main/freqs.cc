@@ -122,12 +122,12 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 					break;
 				}
 			kmer[j] = nt2int(seq[i+j]);
-			kmer_string = seq[i+j];
+			kmer_string += seq[i+j];
 			qual[j] = int(seq_qual[i+j])-base;
 			prob[j] = (1.0 - pow(10.0,-(qual[j])/10.0));
 			readqual *= prob[j];
 			//Calculate vector index of the kmer
-			index_kmer = NUM_NT*index_kmer + kmer[j];
+			//index_kmer = NUM_NT*index_kmer + kmer[j];
 		}
 
 
@@ -139,7 +139,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 			freq[kmer_string] += 1;
 		//freq[index_kmer] += 1;
 
-		quality_vector[index_kmer] += readqual;
+		quality_vector[kmer_string] += readqual;
 		
 		if (avg_quality != NULL)
 			for (int j=0; j<K; j++) avg_quality[index_kmer][kmer[j]] += qual[j];
@@ -171,7 +171,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 					index_kmer = NUM_NT*index_kmer + kmer[j];
 				}
 				//Add a little probability to that kmer
-				quality_vector[index_kmer] += readqual;
+				quality_vector[kmer_string] += readqual;
 			}
 			kmer[j] = original_letter;
 			prob[j] = original_prob;
@@ -225,6 +225,142 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 	return;
 }
 
+
+void fill_overlap_count_vector_1(string seq, string seq_qual, int K,
+						double* freq, double *quality_vector, int normalize,
+						double pc, double *avg_quality_1, double **avg_quality, 
+						double *freq_1, bool redistribute)
+{
+	int L = seq.length();
+	int *kmer = new int[K];
+	int *qual = new int[K];
+	double *prob = new double[K];
+	double *freq_bases = new double[NUM_NT];
+
+
+	double readqual=1;
+	for(int i=0; i<L; ++i){
+		seq[i] = toupper(seq[i]);
+	}
+
+	bool valid_kmer = true;
+	int index_kmer = 0;
+	string kmer_string;
+
+	for (int i=0; i<L-K+1; i++){
+		valid_kmer = true;
+		index_kmer = 0;
+		readqual = 1;
+
+		//Fill the kmer, qual and prob vectors
+		for (int j=0; j<K; j++){
+			if (!is_valid_nt(seq[i+j])){
+					valid_kmer = false;
+					break;
+				}
+			kmer[j] = nt2int(seq[i+j]);
+			kmer_string += seq[i+j];
+			qual[j] = int(seq_qual[i+j])-base;
+			prob[j] = (1.0 - pow(10.0,-(qual[j])/10.0));
+			readqual *= prob[j];
+			//Calculate vector index of the kmer
+			index_kmer = NUM_NT*index_kmer + kmer[j];
+		}
+
+
+		if (!valid_kmer) continue;
+
+		if(freq.find(kmer_string) == freq.end())
+			freq.insert(make_pair(kmer_string, pc));
+		else
+			freq[kmer_string] += 1;
+		//freq[index_kmer] += 1;
+
+		quality_vector[kmer_string] += readqual;
+		
+		if (avg_quality != NULL)
+			for (int j=0; j<K; j++) avg_quality[index_kmer][kmer[j]] += qual[j];
+			
+		if (avg_quality_1 != NULL) 
+			avg_quality_1[kmer[0]] += qual[0];
+		
+		if (!redistribute) continue;
+		
+		//Redistributing quality: for each letter in the kmer...
+		for (int j=0; j<K; j++){
+			int original_letter = kmer[j];
+			double original_prob = prob[j];
+			//...we try to replace it with another
+			for (int letter=0; letter<NUM_NT; letter++){
+				//we must redistribute also to the same letter
+				//if (letter == original_letter) continue;
+				kmer[j] = letter;
+				//Equally subdivided probability
+				//prob[j] = (1.0-original_prob) / double(NUM_NT-1.0);
+				//Probability subidivided basing on the letter frequency
+				prob[j] = (1.0-original_prob) * double(freq_bases[letter]);
+				
+				//Recalculation of the new kmer probability
+				readqual = 1;
+				index_kmer = 0;
+				for (int f=0; f<K; f++){
+					readqual *= prob[j];
+					index_kmer = NUM_NT*index_kmer + kmer[j];
+				}
+				//Add a little probability to that kmer
+				quality_vector[kmer_string] += readqual;
+			}
+			kmer[j] = original_letter;
+			prob[j] = original_prob;
+		}
+	}
+
+
+	// INIZIALIZZARE CON LUNGHEZZA UNORDERED MAP
+	int N = 1;  // number of K-mers
+	for(int k=0; k<K; ++k){
+		N *= NUM_NT;
+	}
+
+	
+	// ??????????????????????????????????????????????????????????
+	//If K==1, freq_1 is NULL and freq_bases is initialized to 1/4 for each base
+	if (K==1){
+		for (int i=0; i<NUM_NT; i++) freq_bases[i] = 1.0/4.0;
+	}//Otherwise, freq_bases is the normalization of freq_1
+	else{
+		double somma =0;
+		for (int i=0; i<NUM_NT; i++) somma += freq_1[i];
+		for (int i=0; i<NUM_NT; i++) freq_bases[i] = freq_1[i]/somma;
+	}
+	// ??????????????????????????????????????????????????????????
+	
+	
+	
+	switch(normalize){
+		case 1:	
+			normalize_row(freq, N);
+			normalize_row(quality_vector, N);
+			break;
+		case 2:
+			normalize_row_against(freq, quality_vector, N);
+			normalize_row(freq, N);
+			break;
+		case 3:
+			normalize_row_against(freq, quality_vector, N);
+			normalize_row(freq, N);
+			normalize_row_projection(freq, quality_vector, N);
+			break;
+		default:
+			break;
+	}
+	
+	delete[] kmer;
+	delete[] qual;
+	delete[] prob;
+	if (K==1) delete[] freq_bases;
+	return;
+}
 
 
 

@@ -195,17 +195,19 @@ int main(int argc, char **argv)
 	// read sequences and build count matrix
 	//MODIFY
 	RecordGenerator rec_gen(fastq_file_name);
-	double **freq = new double*[N];
+	double **freq = new unordered_map<string, double>*[N];
 	//freq[0] = new double[N * L];
 	freq[0] = new unordered_map<string, double>;
 	double **quality = new double*[N];
-	for (int i=0; i<N; i++) quality[i] = new double[L];
+	//for (int i=0; i<N; i++) quality[i] = new double[L];
+	for (int i=0; i<N; i++) quality[i] = new unordered_map<string, double>;
 	
 	double **freq_1  = new double*[N];
 	//freq_1[0] = new double[N * NUM_NT];
 	freq_1[0] = new unordered_map<string, double[NUM_NT]>;
 	double **quality_1 = new double*[N];
-	for (int i=0; i<N; i++) quality_1[i] = new double[NUM_NT];
+	//for (int i=0; i<N; i++) quality_1[i] = new double[NUM_NT];
+	for (int i=0; i<N; i++) quality_1[i] = new unordered_map<string, double[NUM_NT]>;
 	
 	//Vector for calculus of E(Pxi)2
 	double *avg_quality_1 = new double[NUM_NT];
@@ -234,7 +236,7 @@ int main(int argc, char **argv)
 								  avg_quality_1, NULL, NULL, false);
 		
 		//Calculate frequencies of kmers
-		fill_overlap_count_vector(seq, rec.qual(), K, freq[i], quality[i],
+		fill_overlap_count_vector_1(seq, rec.qual(), K, freq[i], quality[i],
 								normalize, pseudocount, NULL, avg_quality, 
 								freq_1[i], redistribute);
 	}
