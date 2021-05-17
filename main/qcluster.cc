@@ -181,10 +181,10 @@ int main(int argc, char **argv)
 	srand(random_seed);
 
 	// initialize constants
-	int L = 1; // length of the freq. vector L = NUM_NT**K
-	for(int k=0; k<K; ++k){
+	int L = 0; // length of the freq. vector L = NUM_NT**K
+	/*for(int k=0; k<K; ++k){
 		L *= NUM_NT;
-	}
+	}*/
 
 	// count sequences
 	int N = CountReads(fastq_file_name);  // number of sequences
@@ -193,32 +193,36 @@ int main(int argc, char **argv)
 	}
 
 	// read sequences and build count matrix
-	//MODIFY
 	RecordGenerator rec_gen(fastq_file_name);
-	double **freq = new unordered_map<string, double>*[N];
+
+	/* Sequence** -> kmers* -> freq per kmer */
+	unordered_map<string, double> **freq = new unordered_map<string, double>*[N];
 	//freq[0] = new double[N * L];
 	freq[0] = new unordered_map<string, double>;
-	double **quality = new double*[N];
+
+	/* Sequence** -> kmers* -> quality */
+	unordered_map<string, double> **quality = new unordered_map<string, double>*[N];
 	//for (int i=0; i<N; i++) quality[i] = new double[L];
 	for (int i=0; i<N; i++) quality[i] = new unordered_map<string, double>;
 	
+
 	double **freq_1  = new double*[N];
-	//freq_1[0] = new double[N * NUM_NT];
-	freq_1[0] = new unordered_map<string, double[NUM_NT]>;
+	freq_1[0] = new double[N * NUM_NT];
 	double **quality_1 = new double*[N];
-	//for (int i=0; i<N; i++) quality_1[i] = new double[NUM_NT];
-	for (int i=0; i<N; i++) quality_1[i] = new unordered_map<string, double[NUM_NT]>;
+	for (int i=0; i<N; i++) quality_1[i] = new double[NUM_NT];
 	
 	//Vector for calculus of E(Pxi)2
 	double *avg_quality_1 = new double[NUM_NT];
 	for(int i=0; i<NUM_NT; i++) avg_quality_1[i] = 0;
 	
 	//Vector for calculus of E(Pxi)3
-	double **avg_quality = new double*[L];
+	/*double **avg_quality = new double*[L];
 	for (int i=0; i<L; i++) {
 		avg_quality[i] = new double[NUM_NT];
 		for (int j=0; j<NUM_NT; j++) avg_quality[i][j] = 0;
-	}
+	}*/
+	unordered_map<string, double*> *avg_quality = new unordered_map<string, double*>;
+
 	
 	//For each read we count the number of kmers
 	//inserimento 
@@ -229,15 +233,15 @@ int main(int argc, char **argv)
 		freq[i] = new unordered_map<string, double>;
 
 		//Calculate frequencies of individual bases
-		//freq_1[i] = freq_1[0] + i*NUM_NT;
-		freq_1[i] = new unordered_map<string, double[NUM_NT]>;
-		fill_overlap_count_vector(seq, rec.qual(), 1, freq_1[i], 
+		freq_1[i] = freq_1[0] + i*NUM_NT;
+
+		fill_overlap_count_vector_1(seq, rec.qual(), 1, freq_1[i], 
 								  quality_1[i], false, pseudocount, 
-								  avg_quality_1, NULL, NULL, false);
+								  avg_quality_1, false);
 		
 		//Calculate frequencies of kmers
-		fill_overlap_count_vector_1(seq, rec.qual(), K, freq[i], quality[i],
-								normalize, pseudocount, NULL, avg_quality, 
+		fill_overlap_count_vector(seq, rec.qual(), K, freq[i], quality[i],
+								normalize, pseudocount, avg_quality, 
 								freq_1[i], redistribute);
 	}
 	
@@ -249,6 +253,10 @@ int main(int argc, char **argv)
 	//Compute the expected quality of each kmer
 	double *expected_qual = NULL;
 	if (e_method != 0) {
+		for(int i = 0; i < N; i++)
+		{
+			for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)	L += iter->size();
+		}
 		expected_qual = new double[L];
 		calculate_quality_expected_value(e_method, N, K, L, freq, quality,
 						freq_1, avg_quality_1, avg_quality, expected_qual);
@@ -271,7 +279,7 @@ int main(int argc, char **argv)
 	
 	
 	// whiten if requested; in this case reset the distance to euclidean L2
-	if (normalize_matrix_flag){
+	/*if (normalize_matrix_flag){
 		dist_type = 'e';
 		normalize_freq_matrix(freq, quality, N, L);
 	}
@@ -381,6 +389,6 @@ int main(int argc, char **argv)
 	// free allocated memory
 	delete[] Z;
 	delete[] assignment;
-	return EXIT_SUCCESS;
+	return EXIT_SUCCESS;*/
 }
 
