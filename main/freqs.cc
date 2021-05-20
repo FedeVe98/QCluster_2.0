@@ -215,6 +215,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 		valid_kmer = true;
 		index_kmer = 0;
 		readqual = 1;
+		kmer_string = "";
 
 		//Fill the kmer, qual and prob vectors
 		for (int j=0; j<K; j++){
