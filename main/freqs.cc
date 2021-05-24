@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <unordered_map>
+#include <set>
 using namespace std;
 
 static bool is_valid_nt(char c)
@@ -318,6 +319,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 }
 
 
+/*** MODIFY THE OTHER CASES ***/
 
 /**Function responsible for the calculation of the quality expected value for 
  * each k-word: the expected value is computed basing on the full dataset.
@@ -325,11 +327,60 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
  * Default method: E1 */
 void calculate_quality_expected_value(int method, int N, int K, int L,
 			unordered_map<string, double> **freq, unordered_map<string, double> **quality, double **freq_1,
-			 double* avg_quality_1, unordered_map<string, double*> *avg_quality, double *expected_qual){
+			 double* avg_quality_1, unordered_map<string, double*> *avg_quality, double *expected_qual_1, 
+			 unordered_map<string, double> *expected_qual){
 	switch (method){
 	case 2:
 		{
-		int *times_to_use = new int[NUM_NT];
+			int *times_to_use = new int[NUM_NT];
+			for(auto iter = avg_quality->begin(); iter != avg_quality->end(); ++iter)
+			{
+				for(int j=0; j<NUM_NT; j++) times_to_use[j] = 0;
+
+				int index;
+				for(int k=0; k<K; k++)
+				{
+					index = nt2int(iter->first[k]);
+					times_to_use[index] += 1;
+				}
+
+				for(int j=0; j < NUM_NT; j++)
+				{
+					if(times_to_use[j] != 0)
+					{
+						avg_quality->operator[](iter->first)[j] /= times_to_use[j];
+					}
+				}
+			}
+
+			delete[] times_to_use;
+
+			for(auto iter = avg_quality->begin(); iter != avg_quality->end(); ++iter)
+			{
+				expected_qual->insert(make_pair(iter->first, 1));
+
+				double num_occ = 0;
+
+				for(int i=0; i<N; i++)
+				{
+					if(freq[i]->find(iter->first) != freq[i]->end())
+						num_occ += freq[i]->operator[](iter->first);
+				}
+
+				for(int j=0; j < NUM_NT; j++)
+				{
+					if(avg_quality->operator[](iter->first)[j] != 0)
+					{
+						expected_qual->operator[](iter->first) *= 1 -
+						pow(10.0, -(avg_quality->operator[](iter->first)[j])
+										/(10.0*num_occ));
+					}
+				}
+			}
+
+
+		
+		/*int *times_to_use = new int[NUM_NT];
 		for (int i=0; i<L; i++){
 			for(int j=0; j<NUM_NT; j++) times_to_use[j] = 0;
 			int div = 1;
@@ -339,24 +390,22 @@ void calculate_quality_expected_value(int method, int N, int K, int L,
 			}
 			for(int j=0; j<NUM_NT; j++)
 				if (times_to_use[j]!=0) avg_quality[i][j] /= times_to_use[j];
-
-			
 		}
 
 		delete[] times_to_use;
 
 		for (int i=0; i<L; i++){
 			int div = 1;
-			expected_qual[i] = 1;
+			expected_qual_1[i] = 1;
 			for(int k=0; k<K; k++){
 				double num_occorrenze = 0;
 				for (int j=0; j<N; j++) {num_occorrenze += freq[j][i];}
-				expected_qual[i] *= 1 - 
+				expected_qual_1[i] *= 1 - 
 					pow(10.0, -(avg_quality[i][(i/div)%(NUM_NT)])
 									/(10.0*num_occorrenze));
 				div *= NUM_NT;
 			}
-		}
+		}*/
 		break;
 		}
 	case 3:
@@ -368,10 +417,10 @@ void calculate_quality_expected_value(int method, int N, int K, int L,
 		}
 		int divisore = 1;
 		
-		for (int i=0; i<L; i++) expected_qual[i] = 1;
+		for (int i=0; i<L; i++) expected_qual_1[i] = 1;
 		for(int k=0; k<K; k++){
 			for (int i=0; i<L; i++){
-				expected_qual[i] *= avg_quality_1[(i/divisore)%(NUM_NT)];
+				expected_qual_1[i] *= avg_quality_1[(i/divisore)%(NUM_NT)];
 			}
 			divisore *= NUM_NT;
 		}
@@ -381,15 +430,37 @@ void calculate_quality_expected_value(int method, int N, int K, int L,
 		
 	default:
 		{
-		for (int i=0; i<L; i++){ 
+		/*for (int i=0; i<L; i++){ 
 			expected_qual[i] = 0; 
 			double denominatore = 0; 
 			for (int j=0; j<N; j++) { 
-				expected_qual[i] += quality[j][i]; 
+				expected_qual_1[i] += quality[j][i]; 
 				denominatore += freq[j][i]; 
 			} 
-			expected_qual[i] /= denominatore; 
-		} 
+			expected_qual_1[i] /= denominatore; 
+		}*/
+
+		unordered_map<string, double> *denominator = new unordered_map<string, double>();
+		for(int i = 0; i < N; i++)
+		{
+			for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
+			{
+				if(expected_qual->find(iter->first) == expected_qual->end())
+					expected_qual->insert(make_pair(iter->first, 0));
+
+				expected_qual->operator[](iter->first) += quality[i]->operator[](iter->first);
+				
+				if(denominator->find(iter->first) == denominator->end())
+					denominator->insert(make_pair(iter->first, 0));
+				
+				denominator->operator[](iter->first) += iter->second;
+			}
+		}
+
+		for(auto iter = denominator->begin(); iter != denominator->end(); ++iter)
+			expected_qual->operator[](iter->first) /= iter->second;
+
+
 		break;	
 		}
 	}//END SWITCH
@@ -428,10 +499,10 @@ void expected_frequency_p2global(int N, int K, int L, double *expected_freq,
 }
 
 
-void expected_frequency_p1global(int N, int K, int L, double *expected_freq,
-								double **freq)
+void expected_frequency_p1global(int N, int K, int L, unordered_map<string, double> *expected_freq,
+								unordered_map<string, double> **freq)
 {
-	int tot_parole = 0;
+	/*int tot_parole = 0;
 	for (int l=0; l<L; l++) {
 		expected_freq[l] = 0;
 		for (int n=0; n<N; n++)
@@ -441,11 +512,31 @@ void expected_frequency_p1global(int N, int K, int L, double *expected_freq,
 	for (int l=0; l<L; l++) {
 		expected_freq[l] /= tot_parole;
 	}
+	return;*/
+
+
+	int tot_words = 0;
+	for(int i = 0; i < N; i++)
+	{
+		for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
+		{
+			if(expected_freq->find(iter->first) == expected_freq->end())
+				expected_freq->insert(make_pair(iter->first, 0));
+
+			expected_freq->operator[](iter->first) += iter->second;
+			
+			tot_words += expected_freq->operator[](iter->first);
+		}
+	}
+
+	for(auto iter = expected_freq->begin(); iter != expected_freq->end(); ++iter)
+		expected_freq->operator[](iter->first) /= tot_words;
+
 	return;
 }
 
 // normalize frequency matrix to make its columns univariant
-void normalize_freq_matrix(double** freq, double** qual, int N, int row_length)
+void normalize_freq_matrix(unordered_map<string, double> **freq, unordered_map<string, double> **qual, int N, int row_length)
 {
 	double tmp, sum_freq, sum_freq_square, V_freq;
 	double sum_qual, sum_qual_square, V_qual;

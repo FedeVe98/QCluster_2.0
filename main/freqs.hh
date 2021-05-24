@@ -33,13 +33,14 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
  * Default method: E1 */
 void calculate_quality_expected_value(int method, int N, int K, int L,
 			unordered_map<string, double> **freq, unordered_map<string, double> **quality, double **freq_1,
-			 double* avg_quality_1, unordered_map<string, double*> *avg_quality, double *expected_qual);
+			 double* avg_quality_1, unordered_map<string, double*> *avg_quality, double *expected_qual_1,
+			 unordered_map<string, double> *expected_qual);
 	
 void expected_frequency_p2global(int N, int K, int L, double *expected_freq,
 								double **freq_1);
 
-void expected_frequency_p1global(int N, int K, int L, double *expected_freq,
-								double **freq);
+void expected_frequency_p1global(int N, int K, int L, unordered_map<string, double> *expected_freq,
+								unordered_map<string, double> **freq);
 
 // normalize frequency matrix to make its columns univariant
 void normalize_freq_matrix(double** data, double** qual, int N, int row_length);

@@ -182,9 +182,9 @@ int main(int argc, char **argv)
 
 	// initialize constants
 	int L = 0; // length of the freq. vector L = NUM_NT**K
-	/*for(int k=0; k<K; ++k){
+	for(int k=0; k<K; ++k){
 		L *= NUM_NT;
-	}*/
+	}
 
 	// count sequences
 	int N = CountReads(fastq_file_name);  // number of sequences
@@ -225,7 +225,6 @@ int main(int argc, char **argv)
 
 	
 	//For each read we count the number of kmers
-	//inserimento 
 	for(int i=0; i<N; ++i){
 		SeqRecord rec = rec_gen.next();
 		string seq = rc_flag ? rec.seq() + rec.rc().seq() : rec.seq();
@@ -251,29 +250,51 @@ int main(int argc, char **argv)
 
 	
 	//Compute the expected quality of each kmer
-	double *expected_qual = NULL;
+	double *expected_qual_1 = NULL;
+	unordered_map<string, double> *expected_qual = new unordered_map<string, double>();
 	if (e_method != 0) {
-		for(int i = 0; i < N; i++)
+		/*for(int i = 0; i < N; i++)
 		{
-			for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)	L += iter->size();
-		}
-		expected_qual = new double[L];
+			for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)	L += 1;
+		}*/
+		expected_qual_1 = new double[L];
 		calculate_quality_expected_value(e_method, N, K, L, freq, quality,
-						freq_1, avg_quality_1, avg_quality, expected_qual);
+						freq_1, avg_quality_1, avg_quality, expected_qual_1, expected_qual);
 	}
+
+	/*** PRINTING FREQ TEST ***/
+	int count = 0;
+	for(int i=0; i < L; i++)
+	{
+		for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
+		{
+			cout << iter->first << "  " << iter->second << endl;
+			count++;
+
+			if(count>5)	continue;
+		}
+	}
+
 	
 	//Expected frequancy of each kmer
-	double *expected_freq = NULL;
+	double *expected_freq_1 = NULL;
+	unordered_map<string, double> *expected_freq = NULL;
 	//Instantiate the vector only if p_method is global (P1G or P2G)
-	if (p_method==2 || p_method==3) expected_freq = new double[L];
+	//if (p_method==2 || p_method==3) expected_freq = new double[L];
 	
 	//P1G Average frequency of every word over the entire dataset
 	if (p_method==2)
+	{
+		expected_freq = new unordered_map<string, double>();
 		expected_frequency_p1global(N, K, L, expected_freq, freq);
+	}
 	
 	//P2G Markovian model based on average frequency of single bases
 	if (p_method==3)
-		expected_frequency_p2global(N, K, L, expected_freq, freq_1);
+	{
+		expected_freq_1 = new double[L];
+		expected_frequency_p2global(N, K, L, expected_freq_1, freq_1);
+	}
 	
 
 	
@@ -281,7 +302,7 @@ int main(int argc, char **argv)
 	// whiten if requested; in this case reset the distance to euclidean L2
 	/*if (normalize_matrix_flag){
 		dist_type = 'e';
-		normalize_freq_matrix(freq, quality, N, L);
+		//normalize_freq_matrix(freq, quality, N, L);
 	}
 	if (verbose_level > 0){
 		cerr<<"Word frequencies calculated\n";
