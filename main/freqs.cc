@@ -319,7 +319,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 }
 
 
-/*** MODIFY THE OTHER CASES ***/
+
 
 /**Function responsible for the calculation of the quality expected value for 
  * each k-word: the expected value is computed basing on the full dataset.
@@ -538,7 +538,7 @@ void expected_frequency_p1global(int N, int K, int L, unordered_map<string, doub
 // normalize frequency matrix to make its columns univariant
 void normalize_freq_matrix(unordered_map<string, double> **freq, unordered_map<string, double> **qual, int N, int row_length)
 {
-	double tmp, sum_freq, sum_freq_square, V_freq;
+	/*double tmp, sum_freq, sum_freq_square, V_freq;
 	double sum_qual, sum_qual_square, V_qual;
 	for(int l=0; l<row_length; ++l){
 		sum_freq_square=0;
@@ -563,5 +563,34 @@ void normalize_freq_matrix(unordered_map<string, double> **freq, unordered_map<s
 			}
 		}
 	}
-	return;
+	return;*/
+
+	double tmp, sum_freq, sum_freq_square, V_freq;
+    double sum_qual, sum_qual_square, V_qual;
+    for(int i = 0; i < N; i++)
+            {
+                sum_freq_square=0;
+                sum_freq=0;
+                sum_qual_square = 0;
+                sum_qual = 0;
+                for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
+                {
+                    tmp = iter->second;
+                    sum_freq_square += tmp*tmp;
+                    sum_freq += tmp;
+                    tmp = expected_freq->operator[](iter->first);
+                    sum_qual_square += tmp*tmp;
+                    sum_qual += tmp;
+                }
+                //Variance
+                V_freq = sqrt( sum_freq_square/N - (sum_freq*sum_freq)/(N*N) );
+                V_qual = sqrt( sum_qual_square/N - (sum_qual*sum_qual)/(N*N) );
+                if (V_freq>0 && V_qual>0){
+                    for(auto iter = freq->begin(); iter != freq->end(); ++iter){
+                        iter->second /= V_freq;
+                        iter->second /= V_qual;
+                    }
+                }
+            }
+    return;
 }
