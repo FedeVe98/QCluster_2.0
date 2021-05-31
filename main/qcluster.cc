@@ -316,10 +316,10 @@ int main(int argc, char **argv)
         cerr<<"Running regular EM clustering "<<num_trials<<" times "
         "to chose the best partitioning"<<endl;
     }
-    //MODIFY
-    /*num_clusters = hard_em(num_clusters, N, L, freq, quality, expected_qual,
+
+    num_clusters = hard_em(num_clusters, N, L, freq, quality, expected_qual,
         quality_1, expected_freq, NUM_NT, freq_1, assignment, Z, num_trials,
-        dist_type, verbose_level);*/
+        dist_type, verbose_level);
 		
 	if (verbose_level > 0){
 		cerr<<"Clustering done\n";

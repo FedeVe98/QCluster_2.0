@@ -21,10 +21,10 @@ extern int max_iterations;
  * dist = distance: e = Euclidean, k = KL, s = symmetrized KL
  * verbose = verbosity level
  * Returns the number of clusters formed
- */
-int hard_em(int K, int N, int row_length, double** freq, 
-double **quality, double *expected_qual, double **quality_1, double *expected_freq, int num_nt,
+ **/
+
+int hard_em(int K, int N, int row_length, unordered_map<string, double>* freq,
+unordered_map<string, double>* quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
 double** freq_1, int* assignment, double* Z, int num_trials=1,
 char dist_type='e', int verbose=0);
-
 

@@ -51,12 +51,10 @@ void deallocate_cache(){
 	return;
 }
 
-
-
 /**
  * Evaluate confidence of assignment to each centroid
  */
-static void eval_confidence(int K, int N, int row_length, double **data,
+/*static void eval_confidence(int K, int N, int row_length, double **data,
 double **centroids, double *Z, double **quality, double *expected_qual, double *expected_freq)
 {
 	static const double KL_DIST_CUTOFF = 10; // set exponential to zero
@@ -123,7 +121,7 @@ void select_dists_cent(char dist_type,
 	}
 
 	return;
-}
+}*/
 
 
 /** EM clustering routine
@@ -153,7 +151,7 @@ void select_dists_cent(char dist_type,
  * point to its corresponding centroid; in the case of the squared 
  * Euclidean distance it gives intra-cluster variance).
  */
-static double em_routine(int K, int N, int row_length, double** freq, 
+/*static double em_routine(int K, int N, int row_length, double** freq,
 		double **quality, double *expected_qual, double **quality_1, double *expected_freq, 
 		int num_nt, double** freq_1, int* assignment, int* numMembers,
 		double** centroids, double** centroids_tilde, double** tmp_data,
@@ -296,7 +294,7 @@ restart:
 			}
 		}
 	}
-}
+}*/
 
 
 // Count number of distinct clusters from assignment vector.
@@ -327,14 +325,14 @@ static int count_num_clusters(int const N, const int * assignment)
 
 
 // implementation of a publicly accessible function
-int hard_em(int K, int N, int row_length, double** data, 
-		double **quality, double *expected_qual, double **quality_1, double *expected_freq,
-		int num_nt, double** data_1, int* assignment, double *Z, 
-		int num_trials, char dist_type, int verbose)
+int hard_em(int K, int N, int row_length, unordered_map<string, double>* freq,
+    unordered_map<string, double>* quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
+    double** freq_1, int* assignment, double* Z, int num_trials=1,
+    char dist_type='e', int verbose=0);
 {
 	// Allocate matrices for centroids, distances, assignment and the 
 	// vector for the number of members
-	double**  centroids = new double*[K];
+	double**  centroids = new double*[K];   //K=number of clusters
 	centroids[0] = new double[row_length*K];
 	for(int k=1; k<K; ++k) {
 		centroids[k] = centroids[0] + k*row_length;
