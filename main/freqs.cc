@@ -578,7 +578,7 @@ void normalize_freq_matrix(unordered_map<string, double> **freq, unordered_map<s
                     tmp = iter->second;
                     sum_freq_square += tmp*tmp;
                     sum_freq += tmp;
-                    tmp = expected_freq->operator[](iter->first);
+                    tmp = freq->operator[](iter->first);
                     sum_qual_square += tmp*tmp;
                     sum_qual += tmp;
                 }

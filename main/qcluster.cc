@@ -300,7 +300,7 @@ int main(int argc, char **argv)
 	
 	
 	// whiten if requested; in this case reset the distance to euclidean L2
-	/*if (normalize_matrix_flag){
+	if (normalize_matrix_flag){
 		dist_type = 'e';
 		//normalize_freq_matrix(freq, quality, N, L);
 	}
@@ -312,36 +312,37 @@ int main(int argc, char **argv)
 	// hard EM clustering
 	int* assignment = new int[N];
 	double* Z = new double[num_clusters * N];
-		if (verbose_level > 0) {
-			cerr<<"Running regular EM clustering "<<num_trials<<" times "
-			"to chose the best partitioning"<<endl;
-		}
-		num_clusters = hard_em(num_clusters, N, L, freq, quality, expected_qual, 
-			quality_1, expected_freq, NUM_NT, freq_1, assignment, Z, num_trials, 
-			dist_type, verbose_level);
+    if (verbose_level > 0) {
+        cerr<<"Running regular EM clustering "<<num_trials<<" times "
+        "to chose the best partitioning"<<endl;
+    }
+    //MODIFY
+    /*num_clusters = hard_em(num_clusters, N, L, freq, quality, expected_qual,
+        quality_1, expected_freq, NUM_NT, freq_1, assignment, Z, num_trials,
+        dist_type, verbose_level);*/
 		
 	if (verbose_level > 0){
 		cerr<<"Clustering done\n";
 	}
 
 	// release memory previously allocated for frequency data
-	delete[] freq[0];
-	delete[] freq;
+	freq[0].clear();
+	freq->clear();
 	delete[] freq_1[0];
 	delete[] freq_1;
 	
 	for(int i=0; i<N; i++) {
-		delete[] quality[i];
+		quality[i]->clear();
 		delete[] quality_1[i];
 	}
 	for(int i=0; i<L; i++)
-		delete[] avg_quality[i];
-	delete[] quality;
+		avg_quality[i].clear();
+	quality->clear();
 	delete[] quality_1;
 	delete[] avg_quality_1;
-	delete[] avg_quality;
-	if (p_method==2 || p_method==3) delete [] expected_freq;
-	if (e_method != 0) delete[] expected_qual;
+	avg_quality.clear();
+	if (p_method==2 || p_method==3) expected_freq->clear();
+	if (e_method != 0) expected_qual->clear();
 
 	// reassign cluster names so that they are sorted 
 	// in the descending order of the number of members
@@ -410,6 +411,6 @@ int main(int argc, char **argv)
 	// free allocated memory
 	delete[] Z;
 	delete[] assignment;
-	return EXIT_SUCCESS;*/
+	return EXIT_SUCCESS;
 }
 
