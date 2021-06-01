@@ -54,34 +54,37 @@ void deallocate_cache(){
 /**
  * Evaluate confidence of assignment to each centroid
  */
-/*static void eval_confidence(int K, int N, int row_length, double **data,
+static void eval_confidence(int K, int N, int row_length, double **data,
 double **centroids, double *Z,  unordered_map<string, double>* quality,  unordered_map<string, double>* expected_qual,  unordered_map<string, double>* expected_freq)
 {
 	static const double KL_DIST_CUTOFF = 10; // set exponential to zero
 		// if we exceed this negative exponent
-	for (int n=0; n<N; n++){
-		double* row = Z + n*K;
-		for(int k=0; k<K; k++){
-			row[k] = kl_distance(centroids[k], data[n], row_length, NULL, 
-								 quality[n], expected_qual, expected_freq);
-		}
-		double min_dist = *row;
-		for(int k=1; k<K; k++){
-			if (min_dist > row[k]){
-				min_dist = row[k];
-			}
-		}
-		double S = 0;
-		for(int k=0; k<K; k++){
-			row[k] -= min_dist;
-			S += row[k] = row[k] > KL_DIST_CUTOFF ? 0 : exp(-row[k]);
-		}
-		for(int k=0; k<K; k++){
-			row[k] /= S;
-		}
+	for (int n=0; n<N; n++)
+	{
+	    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
+            double* row = Z + n*K;
+            for(int k=0; k<K; k++){
+                row[k] = kl_distance(centroids[k], data[n], row_length, NULL,
+                                     iter->second, expected_qual, expected_freq); //quality[n] is true???
+            }
+            double min_dist = *row;
+            for(int k=1; k<K; k++){
+                if (min_dist > row[k]){
+                    min_dist = row[k];
+                }
+            }
+            double S = 0;
+            for(int k=0; k<K; k++){
+                row[k] -= min_dist;
+                S += row[k] = row[k] > KL_DIST_CUTOFF ? 0 : exp(-row[k]);
+            }
+            for(int k=0; k<K; k++){
+                row[k] /= S;
+            }
+        }
 	}
 	return;
-}*/
+}
 
 
 // Auxiliary function to select procedures for evaluation of 
@@ -233,8 +236,7 @@ restart:
 					}
 				}
 				// check for assignment change
-				assignmentChanged = assignmentChanged || (assignment[n] != 
-					new_assignment);
+				assignmentChanged = assignmentChanged || (assignment[n] != new_assignment);
 				// update assignment
 				assignment[n] = new_assignment;
 			}

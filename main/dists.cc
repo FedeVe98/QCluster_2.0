@@ -6,7 +6,7 @@ using namespace std;
 
 
 double euclidean_distance(double *centroid, double *y, int L, double* xt, 
-						  double *quality, double *expected_qual, double *expected_freq)
+						  unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
 {
 	double S = 0;
 	double z;
@@ -18,8 +18,8 @@ double euclidean_distance(double *centroid, double *y, int L, double* xt,
 }
 
 
-double kl_distance(double *centroid, double *p, int L, double* centroid_tilde, 
-				   double *quality, double *expected_qual, double *expected_freq)
+double kl_distance(double *centroid, double *p, int L, double* centroid_tilde,
+				   unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
 {
 	double total_count = 0;
 	for(int i=0; i<L; ++i){
@@ -34,7 +34,7 @@ double kl_distance(double *centroid, double *p, int L, double* centroid_tilde,
 
 
 double symkl_distance(double *centroid, double *p, int L, double* centroid_tilde, 
-					  double *quality, double *expected_qual, double *expected_freq)
+                      unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
 {
 	double total_count = 0;
 	for(int i=0; i<L; ++i){
@@ -65,7 +65,7 @@ double d2_distance(double *centroid, double *p, int L, double* centroid_tilde,
 
 
 double chi2_distance(double *centroid, double *p, int L, double* centroid_tilde, 
-					 double *quality, double *expected_qual, double *expected_freq)
+                    unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
 {
 	double chi2 = 0;
 	double total_count = 0;
@@ -81,7 +81,7 @@ double chi2_distance(double *centroid, double *p, int L, double* centroid_tilde,
 }
 
 double d2ast_distance(double *centroid, double *p, int L, double* centroid_tilde,
-					  double *quality, double *expected_qual, double *expected_freq)
+                       unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
 {
 	//Determines what data to use: global(expected_freq) or local(centroid)
 	double * exp_freq;
