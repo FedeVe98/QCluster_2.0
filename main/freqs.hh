@@ -43,5 +43,5 @@ void expected_frequency_p1global(int N, int K, int L, unordered_map<string, doub
 								unordered_map<string, double> **freq);
 
 // normalize frequency matrix to make its columns univariant
-void normalize_freq_matrix(double** data, double** qual, int N, int row_length);
+void normalize_freq_matrix(unordered_map<string, double>** data, unordered_map<string, double>** qual, int N, int row_length);
 
