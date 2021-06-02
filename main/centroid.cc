@@ -1,14 +1,15 @@
 #include <string.h> // memset
 #include <math.h>
 #include<iostream>
+#include <unordered_map>
 using namespace std;
 
 
 // mean centroid
-void mean_centroid(int N, int row_length, double** freq, int num_nt,
-double** freq_1, double* centroid, double* centroid_tilde, 
-double **quality, double *expected_qual, double **quality_1,
-double *expected_freq)
+void mean_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                   double** freq_1, double* centroid, double* centroid_tilde,
+                   unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+                   unordered_map<string, double>*expected_freq)
 {
 	memset(centroid, 0, row_length * sizeof(*centroid));
 	for(int n=0; n<N; n++){
@@ -25,10 +26,10 @@ double *expected_freq)
 
 
 // d2 centroid
-void d2_centroid(int N, int row_length, double** freq, int num_nt,
-double** freq_1, double* centroid, double* centroid_tilde, 
-double **quality, double *expected_qual, double **quality_1,
-double *expected_freq)
+void d2_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                 double** freq_1, double* centroid, double* centroid_tilde,
+                 unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+                 unordered_map<string, double>*expected_freq)
 {
 	// add the total counts
 	memset(centroid, 0, row_length * sizeof(*centroid));
@@ -51,10 +52,10 @@ double *expected_freq)
 
 
 // KL centroid --- operates on raw counts which do not have to be normalized
-void kl_centroid(int N, int row_length, double** freq, int num_nt,
-double** freq_1, double* centroid, double* centroid_tilde, 
-double **quality, double *expected_qual, double **quality_1,
-double *expected_freq)
+void kl_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                 double** freq_1, double* centroid, double* centroid_tilde,
+                 unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+                 unordered_map<string, double>*expected_freq)
 {
 	// add the total counts
 	memset(centroid, 0, row_length * sizeof(*centroid));
@@ -79,10 +80,10 @@ double *expected_freq)
 // and coumputes frequencies of words using zero order Markov model;
 // i.e., as product of single nucleotide frequencies:
 // f_{w1...w_k} = f_w1 f_w2 ... f_wk
-void mm_centroid(int N, int row_length, double** freq, const int num_nt, 
-		double** freq_1, double* centroid, double* centroid_tilde, 
-		double **quality, double *expected_qual, double **quality_1,
-		double *expected_freq)
+void mm_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+		double** freq_1, double* centroid, double* centroid_tilde,
+		unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+                 unordered_map<string, double>*expected_freq)
 {
 	//If p_method is global (P1G or P2G) we don't need to calculate centroids
 	if (expected_freq != NULL) return;
@@ -135,10 +136,10 @@ void mm_centroid(int N, int row_length, double** freq, const int num_nt,
 
 
 // d2* centroid
-void d2ast_centroid(int N, int row_length, double** freq, int num_nt,
-double** freq_1, double* centroid, double* centroid_tilde, 
-double **quality, double *expected_qual, double **quality_1,
-double *expected_freq)
+void d2ast_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                    double** freq_1, double* centroid, double* centroid_tilde,
+                    unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+                    unordered_map<string, double>*expected_freq)
 {
 	// compute frequencies from MM
 	mm_centroid(N, row_length, freq, num_nt, freq_1, centroid, NULL, 

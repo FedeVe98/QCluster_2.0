@@ -1,7 +1,3 @@
-#pragma once
-
-extern int max_iterations;
-
 /**
  * Hard EM clustering
  * K = number of clusters
@@ -23,8 +19,14 @@ extern int max_iterations;
  * Returns the number of clusters formed
  **/
 
-int hard_em(int K, int N, int row_length, unordered_map<string, double>* freq,
-unordered_map<string, double>* quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
-double** freq_1, int* assignment, double* Z, int num_trials=1,
-char dist_type='e', int verbose=0);
+#pragma once
+#include <string>
+#include <vector>
+#include <unordered_map>
+extern int max_iterations;
+
+int hard_em(int K, int N, int row_length, unordered_map<string, double>* data,
+            unordered_map<string, double>* quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
+            double** data_1, int* assignment, double* Z, int num_trials=1,
+            char dist_type='e', int verbose=0);
 
