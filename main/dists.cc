@@ -146,7 +146,7 @@ double d2ast_distance(double *centroid, unordered_map<string, double>*p, int L, 
                        unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
 {
 	//Determines what data to use: global(expected_freq) or local(centroid)
-    double * exp_freq;
+    unordered_map<string, double>* exp_freq;
     if (expected_freq == NULL) exp_freq = centroid;
     else { exp_freq = expected_freq; }
 	

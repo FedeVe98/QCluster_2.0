@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <unordered_map>
-
+#include <string>
 #include <string.h>
 #include <iostream>
 
@@ -312,21 +312,10 @@ restart:
 		// initial centroid assignment --- initialize with randomly chosen 
 		// freq items
 		for (int k=0; k<K; ++k) {
-		    //MODIFY
 		    int point_number = rand()% N;
 		    int i=0;
-		    string key;
-		    for(auto iter = freq[k]->begin(); iter != freq[k]->end(); ++iter)
-		    {
-		        if (i==point_number){
-		            key = iter->first;
-		        } else
-		        {
-		            i++;
-		        }
-		    }
-            eval_centroid(1, row_length, freq->operator[](key), num_nt, freq_1 +
-            point_number, centroids[k], centroids_tilde[k], quality[k]->operator[](key), expected_qual, quality_1 + point_number, expected_freq);
+            eval_centroid(1, row_length, freq[point_number]->begin(), num_nt, freq_1 +
+            point_number, centroids[k], centroids_tilde[k], quality[point_number]->begin()->first, expected_qual, quality_1 + point_number, expected_freq);
 		}
 
 		// start iterations of EM clustering
@@ -494,7 +483,7 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>* data,
 		if (verbose > 0) {
 			cerr<<"Calling EM routine, attempt "<<t+1<<endl;
 		}
-		double distortion =	em_routine(K, N, row_length, data, quality,
+		double distortion =	em_routine(K, N, row_length, &data, &quality,
 				expected_qual, quality_1, expected_freq, num_nt, data_1,
 				tmp_assignment, numMembers, centroids, centroids_tilde,
 				tmp_data, tmp_data_1, dist_type, verbose);
@@ -514,7 +503,7 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>* data,
 	}
 	//evaluate confidence if using KL with raw counts
 	if (dist_type == 'k') {
-		eval_confidence(K, N, row_length, data, centroids, Z, quality, expected_qual, expected_freq);
+		eval_confidence(K, N, row_length, &data, centroids, Z, &quality, expected_qual, expected_freq);
 	}
 	// delete allocated arrays
 	delete[] centroids[0];
