@@ -56,19 +56,19 @@ void deallocate_cache(){
 /**
  * Evaluate confidence of assignment to each centroid
  */
-static void eval_confidence(int K, int N, int row_length, double **data,
-double **centroids, double *Z,  unordered_map<string, double>* quality,  unordered_map<string, double>* expected_qual,  unordered_map<string, double>* expected_freq)
+static void eval_confidence(int K, int N, int row_length, unordered_map<string, double>**data,
+double **centroids, double *Z,  unordered_map<string, double>** quality,  unordered_map<string, double>* expected_qual,  unordered_map<string, double>* expected_freq)
 {
 	static const double KL_DIST_CUTOFF = 10; // set exponential to zero
 		// if we exceed this negative exponent
 	/*for (int n=0; n<N; n++)
 	{*/
 	int n=0;
-    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
+    for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
         double* row = Z + n*K;
         for(int k=0; k<K; k++){
             row[k] = kl_distance(centroids[k], data[n], row_length, NULL,
-                                 iter->second, expected_qual, expected_freq); //quality[n] is true???
+                                 quality[n], expected_qual, expected_freq); //quality[n] is true???
         }
         double min_dist = *row;
         for(int k=1; k<K; k++){
@@ -86,7 +86,7 @@ double **centroids, double *Z,  unordered_map<string, double>* quality,  unorder
         }
         if (n<N)
             n++;
-        else break
+        else break;
     }
 	//}
 	return;
@@ -378,7 +378,7 @@ static int count_num_clusters(int const N, const int * assignment)
 int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
     unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
     double** freq_1, int* assignment, double* Z, int num_trials=1,
-    char dist_type='e', int verbose=0);
+    char dist_type='e', int verbose=0)
 {
 	// Allocate matrices for centroids, distances, assignment and the 
 	// vector for the number of members
@@ -396,7 +396,7 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
 
 	int* tmp_assignment = new int[N];
 	int *numMembers = new int[K];  // number of members in each cluster
-	double** tmp_data = new double*[N];
+	unordered_map<string, double>** tmp_data = new unordered_map<string, double>*[N];
 	double** tmp_data_1 = new double*[N];
 
 	// call clustering routine
@@ -405,8 +405,8 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
 		if (verbose > 0) {
 			cerr<<"Calling EM routine, attempt "<<t+1<<endl;
 		}
-		double distortion =	em_routine(K, N, row_length, data, quality, 
-				expected_qual, quality_1, expected_freq, num_nt, data_1,
+		double distortion =	em_routine(K, N, row_length, freq, quality, 
+				expected_qual, quality_1, expected_freq, num_nt, freq_1,
 				tmp_assignment, numMembers, centroids, centroids_tilde,
 				tmp_data, tmp_data_1, dist_type, verbose);
 		if (verbose > 0) {
@@ -425,7 +425,7 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
 	}
 	//evaluate confidence if using KL with raw counts
 	if (dist_type == 'k') {
-		eval_confidence(K, N, row_length, data, centroids, Z, quality, expected_qual, expected_freq);
+		eval_confidence(K, N, row_length, freq, centroids, Z, quality, expected_qual, expected_freq);
 	}
 	// delete allocated arrays
 	delete[] centroids[0];
