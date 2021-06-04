@@ -1,9 +1,8 @@
-#include <string.h> // memset
+#include <string.h>
 #include <math.h>
 #include<iostream>
 #include <unordered_map>
 using namespace std;
-
 
 // mean centroid
 void mean_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
@@ -19,10 +18,8 @@ void mean_centroid(int N, int row_length,  unordered_map<string, double>** freq,
 				centroid->at(iter->first) += iter->second;
 		}
 	}
-
-	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter)
 		centroid->at(iter->first) /= N;
-	}
 	return;
 }
 
@@ -47,9 +44,8 @@ void d2_centroid(int N, int row_length,  unordered_map<string, double>** freq, c
 		total_sq_count += iter->second * iter->second;
 	}
 	double norm = sqrt(total_sq_count);
-	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter)
 		centroid->at(iter->first) /= norm;
-	}
 	return;
 }
 
@@ -70,12 +66,10 @@ void kl_centroid(int N, int row_length,  unordered_map<string, double>** freq, c
 	}
 	// now normalize the entries
 	double total_count = 0;
-	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter)
 		total_count += iter->second;
-	}
-	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter)
 		centroid->at(iter->first) /= total_count;
-	}
 	return;
 }
 
@@ -105,10 +99,9 @@ void mm_centroid(int N, int row_length,  unordered_map<string, double>** freq, c
 	}
 	for (int l=0; l<num_nt; l++)
 		S += nt_freq[l];	//S = number of letter in the cluster
-
-	for (int l=0; l<num_nt; l++){
+	for (int l=0; l<num_nt; l++)
 		nt_freq[l] /= S;	//Average frequency of letters in the cluster
-	}
+
 	// compute frequencies of words using Markov model
 	for(int l=0; l<row_length; l++){
 		double p = 1;
@@ -119,23 +112,6 @@ void mm_centroid(int N, int row_length,  unordered_map<string, double>** freq, c
 		//centroid[l] = p;
 	}
 	return;
-	
-	/* P1L: Do not use: produces extremely unbalanced clustering*/
-	/*int tot_word = 0;
-	for (int l=0; l<row_length; l++) {
-		centroid[l] = 0;
-		for (int n=0; n<N; n++)
-			centroid[l] += freq[n][l];
-		tot_word += centroid[l];
-	}
-	
-	//Minimum value: 0.01, to avoid division per zero later
-	for (int l=0; l<row_length; l++) {
-		if (centroid[l] == 0){
-			centroid[l] = 0.01;			
-		}
-		centroid[l] /= tot_word;
-	}*/
 }
 
 
@@ -148,7 +124,6 @@ void d2ast_centroid(int N, int row_length,  unordered_map<string, double>** freq
 	// compute frequencies from MM
 	mm_centroid(N, row_length, freq, num_nt, freq_1, centroid, NULL, 
 				quality, expected_qual, quality_1, expected_freq);
-	
 	double total_count = 0;
 	for(int n=0; n<N; ++n){
 		for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
@@ -175,8 +150,7 @@ void d2ast_centroid(int N, int row_length,  unordered_map<string, double>** freq
 		S += iter->second * iter->second;
 	}
 	S = sqrt(S);
-	for(auto iter = centroid_tilde->begin(); iter != centroid->end(); ++iter){
+	for(auto iter = centroid_tilde->begin(); iter != centroid->end(); ++iter)
 		centroid_tilde->at(iter->first) /= S;
-	}
 	return;
 }

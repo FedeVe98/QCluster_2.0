@@ -10,14 +10,10 @@
 #include "em.hh"
 using namespace std;
 
-
 enum {PC=1};  // default for pseudocount
 enum {TRIALS=100};  // number of bootstrap datasets for consensus clustering
 
-
-
-
-
+//HELP function
 void print_usage(char* progname)
 {
 	cout << "Centroid based (k-means-like) clustering of sequences "
@@ -73,29 +69,29 @@ void print_usage(char* progname)
 	return;
 }
 
-
+//MAIN----------------------------------------------------------------------->
 int main(int argc, char **argv)
 {
+    //initialization of parameters
 	int num_clusters = 5;  // target number of clusters
 	char dist_type = 'e'; // default to L2
 	int K = 2;  // k-mer size
-	bool normalize_matrix_flag = false; // make columns univariant ("whiten");
-		// off by default
+	bool normalize_matrix_flag = false; // make columns univariant ("whiten"); off by default
 	int normalize = 2; // normalize each row. Deafult: method 2
 	bool redistribute = true; //Redistribute missing quality by default
 	int e_method = 1;
 	int p_method = 1;
 	double pseudocount = PC; // pseudocount for k-mers
-	bool rc_flag = false; // append reverse complement to each sequence;
-		// off by default
+	bool rc_flag = false; // append reverse complement to each sequence; off by default
 	unsigned int random_seed = time(NULL); // initial seed
 	int num_trials = 0; // later we check if it was specified using "-t" arg
-		// and set the correct default if it was not; note that the default 
-		// depends on whether consensus clustering is performed
+		                // and set the correct default if it was not; note that the default
+		                // depends on whether consensus clustering is performed
 	int verbose_level = 0;
 	bool write_flag = false; // write sequences by cluster; off by default
 	int default_max_iterations = 1000;
 
+	//select input parameters by command line
 	int opt;
 	while((opt = getopt(argc, argv, "c:d:e:k:m:N:nP:p:q:rRsS:t:vwh")) != -1 ){
 		switch(opt){
@@ -159,104 +155,84 @@ int main(int argc, char **argv)
                 break;
         }
 	}
-
 	if (dist_type != 'a'){
 		p_method = 0;//No calculation of expected freq and expected quality
 		e_method = 0;
 	}
-
 	// if "-t" argument was absent, use the appropriate default
 	if (!num_trials) {
 		num_trials = 1;
 	}
-
 	if(argc != optind + 1){
 		cout<<"Missing/extra input file name"<<endl;
 		print_usage(argv[0]);
 		return EXIT_FAILURE;
 	}
 	char* fastq_file_name = *(argv + optind );
-
 	// initialize random number generator
 	srand(random_seed);
-
 	// initialize constants
 	int L = 0; // length of the freq. vector L = NUM_NT**K
 	for(int k=0; k<K; ++k){
 		L *= NUM_NT;
 	}
-
 	// count sequences
 	int N = CountReads(fastq_file_name);  // number of sequences
 	if (verbose_level>0){
 		cerr<<"Found "<<N<<" sequences\n";
 	}
 
+	//INPUT
 	// read sequences and build count matrix
 	RecordGenerator rec_gen(fastq_file_name);
 
-	/* Sequence** -> kmers* -> freq per kmer */
+	//DATA STRUCTURES
+	// Frequencies and quality of each kmer in all the input sequences; initialization
+	//Sequence** -> kmers* -> freq per kmer
 	unordered_map<string, double> **freq = new unordered_map<string, double>*[N];
-	//freq[0] = new double[N * L];
 	freq[0] = new unordered_map<string, double>;
-
-	/* Sequence** -> kmers* -> quality */
+	//Sequence** -> kmers* -> quality
 	unordered_map<string, double> **quality = new unordered_map<string, double>*[N];
-	//for (int i=0; i<N; i++) quality[i] = new double[L];
 	for (int i=0; i<N; i++) quality[i] = new unordered_map<string, double>;
-	
 
+    // Frequencies and quality of each nucleotide in all the kmers; initialization
 	double **freq_1  = new double*[N];
 	freq_1[0] = new double[N * NUM_NT];
 	double **quality_1 = new double*[N];
 	for (int i=0; i<N; i++) quality_1[i] = new double[NUM_NT];
 	
 	//Vector for calculus of E(Pxi)2
+	//nucleotides
 	double *avg_quality_1 = new double[NUM_NT];
 	for(int i=0; i<NUM_NT; i++) avg_quality_1[i] = 0;
-	
-	//Vector for calculus of E(Pxi)3
-	/*double **avg_quality = new double*[L];
-	for (int i=0; i<L; i++) {
-		avg_quality[i] = new double[NUM_NT];
-		for (int j=0; j<NUM_NT; j++) avg_quality[i][j] = 0;
-	}*/
+	//kmers
 	unordered_map<string, double*> *avg_quality = new unordered_map<string, double*>;
 
-	
+	//ALGORITHM
 	//For each read we count the number of kmers
 	for(int i=0; i<N; ++i){
 		SeqRecord rec = rec_gen.next();
 		string seq = rc_flag ? rec.seq() + rec.rc().seq() : rec.seq();
-		//freq[i] = freq[0] + i*L;
 		freq[i] = new unordered_map<string, double>;
 
 		//Calculate frequencies of individual bases
 		freq_1[i] = freq_1[0] + i*NUM_NT;
-
 		fill_overlap_count_vector_1(seq, rec.qual(), 1, freq_1[i], 
 								  quality_1[i], false, pseudocount, 
 								  avg_quality_1, false);
-		
 		//Calculate frequencies of kmers
 		fill_overlap_count_vector(seq, rec.qual(), K, freq[i], quality[i],
 								normalize, pseudocount, avg_quality, 
 								freq_1[i], redistribute);
 	}
-	
 	if (verbose_level>0){
 		cerr<<"Read counts calculated\n";
 	}
 
-	
 	//Compute the expected quality of each kmer
 	double *expected_qual_1 = NULL;
 	unordered_map<string, double> *expected_qual = new unordered_map<string, double>();
 	if (e_method != 0) {
-		/*for(int i = 0; i < N; i++)
-		{
-			for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)	L += 1;
-		}*/
 		expected_qual_1 = new double[L];
 		calculate_quality_expected_value(e_method, N, K, L, freq, quality,
 						freq_1, avg_quality_1, avg_quality, expected_qual_1, expected_qual);
@@ -276,38 +252,31 @@ int main(int argc, char **argv)
 	}*/
 
 	
-	//Expected frequancy of each kmer
+	//Expected frequency of each kmer
 	double *expected_freq_1 = NULL;
 	unordered_map<string, double> *expected_freq = NULL;
 	//Instantiate the vector only if p_method is global (P1G or P2G)
-	//if (p_method==2 || p_method==3) expected_freq = new double[L];
-	
 	//P1G Average frequency of every word over the entire dataset
 	if (p_method==2)
 	{
 		expected_freq = new unordered_map<string, double>();
 		expected_frequency_p1global(N, K, L, expected_freq, freq);
 	}
-	
 	//P2G Markovian model based on average frequency of single bases
 	if (p_method==3)
 	{
 		expected_freq_1 = new double[L];
 		expected_frequency_p2global(N, K, L, expected_freq_1, freq_1);
 	}
-	
 
-	
-	
 	// whiten if requested; in this case reset the distance to euclidean L2
 	if (normalize_matrix_flag){
 		dist_type = 'e';
-		//normalize_freq_matrix(freq, quality, N, L);
+		normalize_freq_matrix(freq, quality, N, L);
 	}
 	if (verbose_level > 0){
 		cerr<<"Word frequencies calculated\n";
 	}
-
 
 	// hard EM clustering
 	int* assignment = new int[N];
@@ -316,15 +285,15 @@ int main(int argc, char **argv)
         cerr<<"Running regular EM clustering "<<num_trials<<" times "
         "to chose the best partitioning"<<endl;
     }
-
     num_clusters = hard_em(num_clusters, N, L, freq, quality, expected_qual,
-        quality_1, expected_freq, NUM_NT, freq_1, assignment, Z, num_trials,
-        dist_type, verbose_level);
+                            quality_1, expected_freq, NUM_NT, freq_1, assignment, Z, num_trials,
+                            dist_type, verbose_level);
 		
 	if (verbose_level > 0){
 		cerr<<"Clustering done\n";
 	}
 
+	//RELEASE MEMORY
 	// release memory previously allocated for frequency data
 	freq[0]->clear();
     delete[] freq;
@@ -374,11 +343,10 @@ int main(int argc, char **argv)
 		*(assignment + i) = *(rix + *(assignment + i));
 	}
 	delete[] num_members;
-	//delete[] ix and rix later
-
 	cout.setf(ios_base::fixed);
 	cout.precision(4);
 
+	//OUTPUT
 	// output assignment to stdout
 	RecordGenerator rec_gen_2(fastq_file_name);
 	for(int n=0; n<N; ++n){
@@ -407,7 +375,6 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-
 	// free allocated memory
 	delete[] Z;
 	delete[] assignment;

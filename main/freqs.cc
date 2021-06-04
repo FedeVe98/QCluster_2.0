@@ -3,11 +3,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <string.h>
-#include <unistd.h>
 #include <unordered_map>
-#include <set>
 using namespace std;
 
+//UTILITY FUNCTION
 static bool is_valid_nt(char c)
 {
 	c = toupper(c);
@@ -63,6 +62,7 @@ static char int2nt(int c)
 	return -1;
 }
 
+//NORMALIZE FUNCTIONS
 //Divide each element of the vector by the norm1 of the vector itself
 void normalize_row(unordered_map<string, double>* fv)
 {
@@ -70,14 +70,9 @@ void normalize_row(unordered_map<string, double>* fv)
 	for (auto iter = fv->begin(); iter != fv->end(); ++iter){
 		total += iter->second;	// ||fv||1
 	}
-	/*for (int l=0; l<L; l++){
-		fv[l] /= total;
-	}*/
-
 	for (auto iter = fv->begin(); iter != fv->end(); ++iter){
 		fv->operator[](iter->first) /= total;
 	}
-
 	return;
 }
 
@@ -87,9 +82,8 @@ void normalize_row_against(unordered_map<string, double>* freq, unordered_map<st
 {
 	double total = 0;
 	for (auto iter = freq->begin(); iter != freq->end(); ++iter){
-		total += iter->second;	// ||freq||1
+		total += iter->second;
 	}
-
 	for (auto iter = qual->begin(); iter != qual->end(); ++iter){
 		qual->operator[](iter->first) /= total;
 	}
@@ -102,7 +96,7 @@ void normalize_row_projection(unordered_map<string, double>* freq, unordered_map
 {
 	double total = 0, total_qual = 0;
 	for (auto iter = freq->begin(); iter != freq->end(); ++iter){
-		total += iter->second;	// ||freq||1
+		total += iter->second;
 		total_qual += qual->operator[](iter->first);
 	}
 	double partial = (total - total_qual) / freq->size();
@@ -112,39 +106,33 @@ void normalize_row_projection(unordered_map<string, double>* freq, unordered_map
 	return;
 }
 
+//FREQUENCY FUNCTIONS
 //Note: freq_1 MUST NOT be normalized
+//nucleotides of kmers
 void fill_overlap_count_vector_1(string seq, string seq_qual, int K,
-						double* freq_1, 
-						double* quality_vector,
-						int normalize, double pc, 
-						double *avg_quality_1, bool redistribute)
+                                double* freq_1, double* quality_vector, int normalize, double pc,
+                                double *avg_quality_1, bool redistribute)
 {
 	int L = seq.length();
 	int *kmer = new int[K];
 	int *qual = new int[K];
 	double *prob = new double[K];
 	double *freq_bases = new double[NUM_NT];
-
-
 	double readqual=1;
 	for(int i=0; i<L; ++i){
 		seq[i] = toupper(seq[i]);
 	}
-
 	//If K==1, freq_1 is NULL and freq_bases is initialized to 1/4 for each base
 	if (K==1){
 		for (int i=0; i<NUM_NT; i++) freq_bases[i] = 1.0/4.0;
 	}
-
 	bool valid_kmer = true;
 	int index_kmer = 0;
 	string kmer_string;
-
 	for (int i=0; i<L-K+1; i++){
 		valid_kmer = true;
 		index_kmer = 0;
 		readqual = 1;
-
 		//Fill the kmer, qual and prob vectors
 		for (int j=0; j<K; j++){
 			if (!is_valid_nt(seq[i+j])){
@@ -156,25 +144,18 @@ void fill_overlap_count_vector_1(string seq, string seq_qual, int K,
 			qual[j] = int(seq_qual[i+j])-base;
 			prob[j] = (1.0 - pow(10.0,-(qual[j])/10.0));
 			readqual *= prob[j];
-			//Calculate vector index of the kmer
-			//index_kmer = NUM_NT*index_kmer + kmer[j];
+            index_kmer = NUM_NT*index_kmer + kmer[j];
 		}
-
-
 		if (!valid_kmer) continue;
-
 		freq_1[index_kmer] += 1;
-
 		quality_vector[index_kmer] += readqual;
-			
 		if (avg_quality_1 != NULL) 
 			avg_quality_1[kmer[0]] += qual[0];
-
 	}
 
 	/*** PRINTING FREQ_1 TEST ***/
-	int count = 0;
-	/*for(int i = 0; i < L; i++)
+	/*int count = 0;
+	for(int i = 0; i < L; i++)
 	{
 		cout << freq_1[i] << endl;
 		count++;
@@ -182,8 +163,6 @@ void fill_overlap_count_vector_1(string seq, string seq_qual, int K,
 		if(count>10)	continue;
 	}*/
 
-
-	
 	delete[] kmer;
 	delete[] qual;
 	delete[] prob;
@@ -191,11 +170,10 @@ void fill_overlap_count_vector_1(string seq, string seq_qual, int K,
 	return;
 }
 
+//kmers of sequences
 void fill_overlap_count_vector(string seq, string seq_qual, int K,
-						unordered_map<string, double>* freq, 
-						unordered_map<string, double>* quality_vector,
-						int normalize, double pc, 
-						unordered_map<string, double*> *avg_quality, 
+						unordered_map<string, double>* freq, unordered_map<string, double>* quality_vector,
+						int normalize, double pc, unordered_map<string, double*> *avg_quality,
 						double* freq_1, bool redistribute)
 {
 	int L = seq.length();
@@ -203,12 +181,10 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 	int *qual = new int[K];
 	double *prob = new double[K];
 	double *freq_bases = new double[NUM_NT];
-
 	double readqual=1;
 	for(int i=0; i<L; ++i){
 		seq[i] = toupper(seq[i]);
 	}
-
 	bool valid_kmer = true;
 	int index_kmer = 0;
 	string kmer_string;
@@ -222,14 +198,10 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 		for (int i=0; i<NUM_NT; i++) somma += freq_1[i];
 		for (int i=0; i<NUM_NT; i++) freq_bases[i] = freq_1[i]/somma;
 	}
-
-
 	for (int i=0; i<L-K+1; i++){
 		valid_kmer = true;
-		index_kmer = 0;
 		readqual = 1;
 		kmer_string = "";
-
 		//Fill the kmer, qual and prob vectors
 		for (int j=0; j<K; j++){
 			if (!is_valid_nt(seq[i+j])){
@@ -241,20 +213,15 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 			qual[j] = int(seq_qual[i+j])-base;
 			prob[j] = (1.0 - pow(10.0,-(qual[j])/10.0));
 			readqual *= prob[j];
-			//Calculate vector index of the kmer
-			index_kmer = NUM_NT*index_kmer + kmer[j];
 		}
-
-
 		if (!valid_kmer) continue;
-
+		//insert into freq data structure
 		if(freq->find(kmer_string) == freq->end())
 			freq->insert(make_pair(kmer_string, pc));
 		else
 			freq->operator[](kmer_string) += 1;
-
 		quality_vector->operator[](kmer_string) += readqual;
-		
+
 		if (avg_quality != NULL)
 		{
 			if(avg_quality->find(kmer_string) == avg_quality->end())
@@ -266,23 +233,19 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 
 			for (int j=0; j<K; j++) avg_quality->operator[](kmer_string)[kmer[j]] += qual[j];
 		}
-			
-		/*if (avg_quality_1 != NULL) 
-			avg_quality_1[kmer[0]] += qual[0]; */
-		
+
 		if (!redistribute) continue;
 
 		//Redistributing quality: for each letter in the kmer...
+		kmer_string="";
 		for (int j=0; j<K; j++){
 			int original_letter = kmer[j];
 			double original_prob = prob[j];
 			//...we try to replace it with another
 			for (int letter=0; letter<NUM_NT; letter++){
 				//we must redistribute also to the same letter
-				//if (letter == original_letter) continue;
 				kmer[j] = letter;
 				//Equally subdivided probability
-				//prob[j] = (1.0-original_prob) / double(NUM_NT-1.0);
 				//Probability subidivided basing on the letter frequency
 				prob[j] = (1.0-original_prob) * double(freq_bases[letter]);
 				//Recalculation of the new kmer probability
@@ -290,7 +253,6 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 				index_kmer = 0;
 				for (int f=0; f<K; f++){
 					readqual *= prob[j];
-					//index_kmer = NUM_NT*index_kmer + kmer[j];
 					char tmp = int2nt(kmer[j]);
                     kmer_string += tmp;
 				}
@@ -304,7 +266,6 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 
 
 	int N = freq->size();
-	
 	switch(normalize){
 		case 1:	
 			normalize_row(freq);
@@ -324,14 +285,14 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 	}
 
 	/*** PRINTING FREQ_1 TEST ***/
-	int count = 0;
+	/*int count = 0;
 	for(auto iter = freq->begin(); iter != freq->end(); ++iter)
 	{
 		cout << iter->first << "  " << iter->second << endl;
 		count++;
 
 		if(count>10)	continue;
-	}
+	}*/
 	
 	delete[] kmer;
 	delete[] qual;
@@ -348,9 +309,9 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
  * Refer to the documentation for the description of the possible methods. 
  * Default method: E1 */
 void calculate_quality_expected_value(int method, int N, int K, int L,
-			unordered_map<string, double> **freq, unordered_map<string, double> **quality, double **freq_1,
-			 double* avg_quality_1, unordered_map<string, double*> *avg_quality, double *expected_qual_1, 
-			 unordered_map<string, double> *expected_qual){
+                                      unordered_map<string, double> **freq, unordered_map<string, double> **quality,
+                                      double **freq_1, double* avg_quality_1, unordered_map<string,
+                                      double*> *avg_quality, double *expected_qual_1, unordered_map<string, double> *expected_qual){
 	switch (method){
 	case 2:
 		{
@@ -399,35 +360,6 @@ void calculate_quality_expected_value(int method, int N, int K, int L,
 					}
 				}
 			}
-
-
-		
-		/*int *times_to_use = new int[NUM_NT];
-		for (int i=0; i<L; i++){
-			for(int j=0; j<NUM_NT; j++) times_to_use[j] = 0;
-			int div = 1;
-			for(int k=0; k<K; k++){
-				times_to_use[(i/div)%(NUM_NT)] += 1;
-				div *= NUM_NT;
-			}
-			for(int j=0; j<NUM_NT; j++)
-				if (times_to_use[j]!=0) avg_quality[i][j] /= times_to_use[j];
-		}
-
-		delete[] times_to_use;
-
-		for (int i=0; i<L; i++){
-			int div = 1;
-			expected_qual_1[i] = 1;
-			for(int k=0; k<K; k++){
-				double num_occorrenze = 0;
-				for (int j=0; j<N; j++) {num_occorrenze += freq[j][i];}
-				expected_qual_1[i] *= 1 - 
-					pow(10.0, -(avg_quality[i][(i/div)%(NUM_NT)])
-									/(10.0*num_occorrenze));
-				div *= NUM_NT;
-			}
-		}*/
 		break;
 		}
 	case 3:
@@ -452,16 +384,6 @@ void calculate_quality_expected_value(int method, int N, int K, int L,
 		
 	default:
 		{
-		/*for (int i=0; i<L; i++){ 
-			expected_qual[i] = 0; 
-			double denominatore = 0; 
-			for (int j=0; j<N; j++) { 
-				expected_qual_1[i] += quality[j][i]; 
-				denominatore += freq[j][i]; 
-			} 
-			expected_qual_1[i] /= denominatore; 
-		}*/
-
 		unordered_map<string, double> *denominator = new unordered_map<string, double>();
 		for(int i = 0; i < N; i++)
 		{
@@ -485,13 +407,11 @@ void calculate_quality_expected_value(int method, int N, int K, int L,
 
 		break;	
 		}
-	}//END SWITCH
-	
-}//END FUNCTION
+	}
+}
 
-
-void expected_frequency_p2global(int N, int K, int L, double *expected_freq,
-								double **freq_1)
+//expected frequency of nucleotides
+void expected_frequency_p2global(int N, int K, int L, double *expected_freq, double **freq_1)
 {
 	double nt_freq[NUM_NT];
 	memset(nt_freq, 0, NUM_NT * sizeof(nt_freq[0]));
@@ -520,23 +440,10 @@ void expected_frequency_p2global(int N, int K, int L, double *expected_freq,
 	return;
 }
 
-
+//expected frequency of kmers
 void expected_frequency_p1global(int N, int K, int L, unordered_map<string, double> *expected_freq,
-								unordered_map<string, double> **freq)
+								 unordered_map<string, double> **freq)
 {
-	/*int tot_parole = 0;
-	for (int l=0; l<L; l++) {
-		expected_freq[l] = 0;
-		for (int n=0; n<N; n++)
-			expected_freq[l] += freq[n][l];
-		tot_parole += expected_freq[l];
-	}	
-	for (int l=0; l<L; l++) {
-		expected_freq[l] /= tot_parole;
-	}
-	return;*/
-
-
 	int tot_words = 0;
 	for(int i = 0; i < N; i++)
 	{
@@ -550,43 +457,14 @@ void expected_frequency_p1global(int N, int K, int L, unordered_map<string, doub
 			tot_words += expected_freq->operator[](iter->first);
 		}
 	}
-
 	for(auto iter = expected_freq->begin(); iter != expected_freq->end(); ++iter)
 		expected_freq->operator[](iter->first) /= tot_words;
-
 	return;
 }
 
 // normalize frequency matrix to make its columns univariant
 void normalize_freq_matrix(unordered_map<string, double> **freq, unordered_map<string, double> **qual, int N, int row_length)
 {
-	/*double tmp, sum_freq, sum_freq_square, V_freq;
-	double sum_qual, sum_qual_square, V_qual;
-	for(int l=0; l<row_length; ++l){
-		sum_freq_square=0;
-		sum_freq=0;
-		sum_qual_square = 0;
-		sum_qual = 0;
-		for(int n=0; n<N; ++n){
-			tmp = *(*(freq+n)+l);
-			sum_freq_square += tmp*tmp;
-			sum_freq += tmp;
-			tmp = *(*(qual+n)+l);
-			sum_qual_square += tmp*tmp;
-			sum_qual += tmp;
-		}
-		//Variance:
-		V_freq = sqrt( sum_freq_square/N - (sum_freq*sum_freq)/(N*N) );  
-		V_qual = sqrt( sum_qual_square/N - (sum_qual*sum_qual)/(N*N) ); 
-		if (V_freq>0 && V_qual>0){
-			for(int n=0; n<N; ++n){
-				*(*(freq+n)+l) /= V_freq;
-				*(*(qual+n)+l) /= V_qual;				
-			}
-		}
-	}
-	return;*/
-
 	double tmp, sum_freq, sum_freq_square, V_freq;
     double sum_qual, sum_qual_square, V_qual;
     for(int i = 0; i < N; i++)

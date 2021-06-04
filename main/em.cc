@@ -1,5 +1,4 @@
 #include "em.hh"
-#include "freqs.hh"
 #include "dists.hh"
 #include "centroid.hh"
 #include <unordered_map>
@@ -8,16 +7,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
-
 using namespace std;
 
-
+//global variables
 int *best_assignment;
 double best_distortion;
 int iterations;
 int max_iterations = 1000;
 
-
+//UTILITY FUNCTIONS
 /**Initialize the vector that mantains the best assignment found so far. */
 void initialize_cache(int N){
     iterations = 0;
@@ -47,12 +45,12 @@ bool exceed_max_iterations(int N, int K, int *assignment, double &distortion){
     return false;
 }
 
-
 void deallocate_cache(){
     delete [] best_assignment;
     return;
 }
 
+//CLUSTERING FUNCTIONS
 /**
  * Evaluate confidence of assignment to each centroid
  */
@@ -95,9 +93,11 @@ static void eval_confidence(int K, int N, int row_length, unordered_map<string, 
 // distances and centroids
 void select_dists_cent(char dist_type,
                        double (**distf)(unordered_map<string, double>*, unordered_map<string, double>*, int,
-                                        unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*),
+                                        unordered_map<string, double>*, unordered_map<string, double>*,
+                                        unordered_map<string, double>*, unordered_map<string, double>*),
                        void (**eval_centroid)(int, int, unordered_map<string, double>**,
-                                              int, double**, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>**, unordered_map<string, double> *,
+                                              int, double**, unordered_map<string, double>*, unordered_map<string,
+                                              double>*, unordered_map<string, double>**, unordered_map<string, double> *,
                                               double**, unordered_map<string, double>*))
 {
     switch (dist_type){
@@ -159,26 +159,27 @@ void select_dists_cent(char dist_type,
  * Euclidean distance it gives intra-cluster variance).
  */
 static double em_routine(int K, int N, int row_length, unordered_map<string, double>** freq,
-                         unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1,
-                         unordered_map<string, double>* expected_freq,
-                         int num_nt, double** freq_1, int* assignment, int* numMembers,
-                         unordered_map<string, double>** centroids, unordered_map<string, double>** centroids_tilde, unordered_map<string, double>** tmp_data,
-                         double**tmp_data_1, char dist_type,
-                         int verbose=0, int allow_empty_clusters = 0)
+                         unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual,
+                         double **quality_1, unordered_map<string, double>* expected_freq,int num_nt, double** freq_1,
+                         int* assignment, int* numMembers, unordered_map<string, double>** centroids, unordered_map<string,
+                         double>** centroids_tilde, unordered_map<string, double>** tmp_data, double**tmp_data_1,
+                         char dist_type, int verbose=0, int allow_empty_clusters = 0)
 
 {
     unordered_map<string, double> **tmp_qfreq = new unordered_map<string, double>*[N];
     double ** tmp_qfreq_1 = new double*[N];
-
-
     double distortion = 0;
     initialize_cache(N);
+
     // choose auxiliary functions
     double (*distf)(unordered_map<string, double>*, unordered_map<string, double>*, int,
-                    unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*);
-    void (*eval_centroid)(int, int, unordered_map<string, double>**,
-                          int, double**, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>**, unordered_map<string, double> *,
+                    unordered_map<string, double>*, unordered_map<string, double>*,
+                    unordered_map<string, double>*, unordered_map<string, double>*);
+    void (*eval_centroid)(int, int, unordered_map<string, double>**, int, double**,
+                          unordered_map<string, double>*, unordered_map<string, double>*,
+                          unordered_map<string, double>**, unordered_map<string, double> *,
                           double**, unordered_map<string, double>*);
+
     select_dists_cent(dist_type, &distf, &eval_centroid);
 
     while (true){ // repeat clustering attempts till we get a result
@@ -197,14 +198,7 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                           point_number, centroids[k], centroids_tilde[k],
                           quality + point_number, expected_qual,
                           quality_1 + point_number, expected_freq);
-            /*int point_number = rand()% N;
-            eval_centroid(1, row_length, freq + point_number, num_nt, freq_1 +
-            point_number, centroids[k], centroids_tilde[k],
-            quality + point_number, expected_qual,
-            quality_1 + point_number, expected_freq);*/
         }
-
-
         // start iterations of EM clustering
         while (true){
             // compute the distances to the new centroids
@@ -311,26 +305,6 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                                   tmp_qfreq, expected_qual, tmp_qfreq_1,expected_freq);
                 }
             }
-
-            /*for(int k=0; k<K; k++){
-                if(!allow_empty_clusters || numMembers[k]){
-                    int elems_in_cluster = 0;
-                    for(int n=0; n<N; ++n){
-                        if(assignment[n] == k){
-                            tmp_data[elems_in_cluster] = freq[n];
-                            tmp_data_1[elems_in_cluster] = freq_1[n];
-
-                            tmp_qfreq[elems_in_cluster] = quality[n];
-                            tmp_qfreq_1[elems_in_cluster] = quality_1[n];
-
-                            elems_in_cluster++;
-                        }
-                    }
-                    eval_centroid(elems_in_cluster, row_length, tmp_data,
-                        num_nt, tmp_data_1, centroids[k], centroids_tilde[k],
-                        tmp_qfreq, expected_qual, tmp_qfreq_1,expected_freq);
-                }
-            }*/
         }
     }
 }
@@ -363,13 +337,7 @@ static int count_num_clusters(int const N, const int * assignment)
 }
 
 
-// implementation of a publicly accessible function
-
-
-/*int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
-            unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
-            double** freq_1, int* assignment, double* Z, int num_trials,
-            char dist_type, int verbose)*/
+//ACCESSIBLE FUNCTION
 int hard_em(int K, int N, int row_length, unordered_map<string, double>** data,
             unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual,
             double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
@@ -379,20 +347,13 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** data,
     // Allocate matrices for centroids, distances, assignment and the
     // vector for the number of members
     unordered_map<string, double>**  centroids = new unordered_map<string, double>*[K];   //K=number of clusters
-    //centroids[0] = new double[row_length*K];
     for(int k=1; k<K; ++k) {
         centroids[k] = centroids[0] + k*row_length;
-    } // K*row_length matrix for centroid locations
+    }
 
     unordered_map<string, double>**  centroids_tilde = new unordered_map<string, double>*[K];
-    /*centroids_tilde[0] = new double[row_length*K];
-    for(int k=1; k<K; ++k) {
-        centroids_tilde[k] = centroids_tilde[0] + k*row_length;
-    } // K*row_length matrix for X_tilde vars for centroids
-    */
     int* tmp_assignment = new int[N];
     int *numMembers = new int[K];  // number of members in each cluster
-    //unordered_map<string, double>** tmp_data = new unordered_map<string, double>*[N];
     unordered_map<string,double>** tmp_data = new unordered_map<string,double>*[N];
     double** tmp_data_1 = new double*[N];
 
@@ -433,8 +394,6 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** data,
     delete[] tmp_data;
     delete[] tmp_data_1;
     delete[] tmp_assignment;
-
     // return the number of clusters
     return count_num_clusters(N, assignment);
 }
-
