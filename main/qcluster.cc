@@ -263,7 +263,7 @@ int main(int argc, char **argv)
 	}
 
 	/*** PRINTING FREQ TEST ***/
-	int count = 0;
+	/*int count = 0;
 	for(int i=0; i < L; i++)
 	{
 		for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
@@ -273,7 +273,7 @@ int main(int argc, char **argv)
 
 			if(count>5)	continue;
 		}
-	}
+	}*/
 
 	
 	//Expected frequancy of each kmer

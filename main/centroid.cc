@@ -6,71 +6,75 @@ using namespace std;
 
 
 // mean centroid
-void mean_centroid(int N, int row_length,  unordered_map<string, double>* freq, const int num_nt,
-                   double** freq_1, double* centroid, double* centroid_tilde,
-                   unordered_map<string, double>*quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+void mean_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                   double** freq_1, unordered_map<string, double>* centroid, unordered_map<string, double>* centroid_tilde,
+                   unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
                    unordered_map<string, double>*expected_freq)
 {
-	memset(centroid, 0, row_length * sizeof(*centroid));
 	for(int n=0; n<N; n++){
-		for(int l=0; l<row_length; l++){
-			centroid[l] += quality[n][l];
+		for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
+			if(centroid->find(iter->first) == centroid->end())
+				centroid->insert(make_pair(iter->first, iter->second));
+			else
+				centroid->at(iter->first) += iter->second;
 		}
 	}
 
-	for(int l=0; l<row_length; l++){
-		centroid[l] /= N;
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+		centroid->at(iter->first) /= N;
 	}
 	return;
 }
 
 
 // d2 centroid
-void d2_centroid(int N, int row_length,  unordered_map<string, double>* freq, const int num_nt,
-                 double** freq_1, double* centroid, double* centroid_tilde,
-                 unordered_map<string, double>*quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+void d2_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                 double** freq_1, unordered_map<string, double>* centroid, unordered_map<string, double>* centroid_tilde,
+                 unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
                  unordered_map<string, double>*expected_freq)
 {
-	// add the total counts
-	memset(centroid, 0, row_length * sizeof(*centroid));
 	for(int n=0; n<N; ++n){
-		for(int l=0; l<row_length; ++l){
-			centroid[l] += quality[n][l];
+		for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
+			if(centroid->find(iter->first) == centroid->end())
+				centroid->insert(make_pair(iter->first, iter->second));
+			else
+				centroid->at(iter->first) += iter->second;
 		}
 	}
 	// now normalize the entries
 	double total_sq_count = 0;
-	for(int l=0; l<row_length; ++l){
-		total_sq_count += centroid[l] * centroid[l];
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+		total_sq_count += iter->second * iter->second;
 	}
 	double norm = sqrt(total_sq_count);
-	for(int l=0; l<row_length; ++l){
-		centroid[l] /= norm;
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+		centroid->at(iter->first) /= norm;
 	}
 	return;
 }
 
 
 // KL centroid --- operates on raw counts which do not have to be normalized
-void kl_centroid(int N, int row_length,  unordered_map<string, double>* freq, const int num_nt,
-                 double** freq_1, double* centroid, double* centroid_tilde,
-                 unordered_map<string, double>*quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+void kl_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                 double** freq_1, unordered_map<string, double>* centroid, unordered_map<string, double>* centroid_tilde,
+                 unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
                  unordered_map<string, double>*expected_freq)
 {
-	// add the total counts
-	memset(centroid, 0, row_length * sizeof(*centroid));
 	for(int n=0; n<N; ++n){
-		for(int l=0; l<row_length; ++l){
-			centroid[l] += quality[n][l];
+		for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
+			if(centroid->find(iter->first) == centroid->end())
+				centroid->insert(make_pair(iter->first, iter->second));
+			else
+				centroid->at(iter->first) += iter->second;
 		}
 	}
 	// now normalize the entries
 	double total_count = 0;
-	for(int l=0; l<row_length; ++l){
-		total_count += centroid[l];
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+		total_count += iter->second;
 	}
-	for(int l=0; l<row_length; ++l){
-		centroid[l] /= total_count;
+	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter){
+		centroid->at(iter->first) /= total_count;
 	}
 	return;
 }
@@ -80,9 +84,9 @@ void kl_centroid(int N, int row_length,  unordered_map<string, double>* freq, co
 // and coumputes frequencies of words using zero order Markov model;
 // i.e., as product of single nucleotide frequencies:
 // f_{w1...w_k} = f_w1 f_w2 ... f_wk
-void mm_centroid(int N, int row_length,  unordered_map<string, double>* freq, const int num_nt,
-                 double** freq_1, double* centroid, double* centroid_tilde,
-                 unordered_map<string, double>*quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+void mm_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                 double** freq_1, unordered_map<string, double>* centroid, unordered_map<string, double>* centroid_tilde,
+                 unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
                  unordered_map<string, double>*expected_freq)
 {
 	//If p_method is global (P1G or P2G) we don't need to calculate centroids
@@ -112,7 +116,7 @@ void mm_centroid(int N, int row_length,  unordered_map<string, double>* freq, co
 			int digit = l/M % num_nt;
 			p *= nt_freq[digit];
 		}
-		centroid[l] = p;
+		//centroid[l] = p;
 	}
 	return;
 	
@@ -136,39 +140,43 @@ void mm_centroid(int N, int row_length,  unordered_map<string, double>* freq, co
 
 
 // d2* centroid
-void d2ast_centroid(int N, int row_length,  unordered_map<string, double>* freq, const int num_nt,
-                    double** freq_1, double* centroid, double* centroid_tilde,
-                    unordered_map<string, double>*quality,  unordered_map<string, double>*expected_qual, double **quality_1,
+void d2ast_centroid(int N, int row_length,  unordered_map<string, double>** freq, const int num_nt,
+                    double** freq_1, unordered_map<string, double>* centroid, unordered_map<string, double>* centroid_tilde,
+                    unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
                     unordered_map<string, double>*expected_freq)
 {
 	// compute frequencies from MM
 	mm_centroid(N, row_length, freq, num_nt, freq_1, centroid, NULL, 
 				quality, expected_qual, quality_1, expected_freq);
-	// compute X_tilde
-	memset(centroid_tilde, 0, row_length * sizeof(*centroid_tilde));
 	
 	double total_count = 0;
 	for(int n=0; n<N; ++n){
-		for(int l=0; l<row_length; ++l){
-			centroid_tilde[l] += quality[n][l];
-			total_count += freq[n][l];
+		for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
+			if(centroid->find(iter->first) == centroid->end())
+				centroid_tilde->insert(make_pair(iter->first, iter->second));
+			else
+			{
+				centroid_tilde->at(iter->first) += quality[n]->operator[](iter->first);
+				total_count += freq[n]->operator[](iter->first);
+			}
 		}
+		
 	}
 	
 	//Determines what data to use: global(expected_freq) or local(centroid)
-	double * exp_freq;
+	unordered_map<string, double> * exp_freq;
 	if (expected_freq==NULL) exp_freq = centroid;
 	else exp_freq = expected_freq;
 	
 	double S = 0;
-	for(int l=0; l<row_length; ++l){
-		centroid_tilde[l] -= total_count * exp_freq[l] * expected_qual[l];
-		centroid_tilde[l] /= sqrt(exp_freq[l] * expected_qual[l]);
-		S += centroid_tilde[l] * centroid_tilde[l];
+	for(auto iter = centroid_tilde->begin(); iter != centroid->end(); ++iter){
+		centroid_tilde->at(iter->first) -= total_count * exp_freq->operator[](iter->first) * expected_qual->operator[](iter->first);
+		centroid_tilde->at(iter->first) /= sqrt(exp_freq->operator[](iter->first) * expected_qual->operator[](iter->first));
+		S += iter->second * iter->second;
 	}
 	S = sqrt(S);
-	for(int l=0; l<row_length; ++l){
-		centroid_tilde[l] /= S;
+	for(auto iter = centroid_tilde->begin(); iter != centroid->end(); ++iter){
+		centroid_tilde->at(iter->first) /= S;
 	}
 	return;
 }
