@@ -22,28 +22,28 @@ int max_iterations = 1000;
 void initialize_cache(int N){
 	iterations = 0;
 	best_assignment = new int[N];
-	best_distortion = 1000000000000000;//infinite
+	best_distortion = 1000000000000000;//infinite	
 	for (int i=0; i<N; i++) best_assignment[i] = -1;
 	return;
 }
 
-/**Function that controls if the number of iterations without improvement of
+/**Function that controls if the number of iterations without improvement of 
  * the best solution exceed a bound. If so, it substitutes the current solution
  * with the best found so far and return true. */
 bool exceed_max_iterations(int N, int K, int *assignment, double &distortion){
 	iterations++;
 	if (iterations>max_iterations){
 		distortion = best_distortion;
-		for(int n=0; n<N; n++) assignment[n] = best_assignment[n];
+		for(int n=0; n<N; n++) assignment[n] = best_assignment[n];	
 		return true;
 	}
 	else{
 		if (distortion < best_distortion){
 			iterations = 0;
-			for(int n=0; n<N; n++) best_assignment[n] = assignment[n];
+			for(int n=0; n<N; n++) best_assignment[n] = assignment[n];	
 			best_distortion = distortion;
 		}
-	}
+	}	
 	return false;
 }
 
@@ -57,47 +57,49 @@ void deallocate_cache(){
  * Evaluate confidence of assignment to each centroid
  */
 static void eval_confidence(int K, int N, int row_length, unordered_map<string, double>**data,
-double **centroids, double *Z,  unordered_map<string, double>** quality,
-unordered_map<string, double>* expected_qual,  unordered_map<string, double>* expected_freq)
-
+double **centroids, double *Z,  unordered_map<string, double>** quality,  unordered_map<string, double>* expected_qual,  unordered_map<string, double>* expected_freq)
 {
 	static const double KL_DIST_CUTOFF = 10; // set exponential to zero
 		// if we exceed this negative exponent
-    for(int n=0; n<N; n++) {
-        double *row = Z + n * K;
-        for (int k = 0; k < K; k++) {
+	/*for (int n=0; n<N; n++)
+	{*/
+	int n=0;
+    for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
+        double* row = Z + n*K;
+        for(int k=0; k<K; k++){
             row[k] = kl_distance(centroids[k], data[n], row_length, NULL,
-                                 quality[n], expected_qual, expected_freq);
+                                 quality[n], expected_qual, expected_freq); //quality[n] is true???
         }
         double min_dist = *row;
-        for (int k = 1; k < K; k++) {
-            if (min_dist > row[k]) {
+        for(int k=1; k<K; k++){
+            if (min_dist > row[k]){
                 min_dist = row[k];
             }
         }
         double S = 0;
-        for (int k = 0; k < K; k++) {
+        for(int k=0; k<K; k++){
             row[k] -= min_dist;
             S += row[k] = row[k] > KL_DIST_CUTOFF ? 0 : exp(-row[k]);
         }
-        for (int k = 0; k < K; k++) {
+        for(int k=0; k<K; k++){
             row[k] /= S;
         }
-        if (n < N)
+        if (n<N)
             n++;
         else break;
     }
+	//}
 	return;
 }
 
 
-// Auxiliary function to select procedures for evaluation of
+// Auxiliary function to select procedures for evaluation of 
 // distances and centroids
-void select_dists_cent(char dist_type,
+void select_dists_cent(char dist_type, 
 						double (**distf)(double*, unordered_map<string, double>*, int,
-						double*, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*),
-						void (**eval_centroid)(int, int, unordered_map<string, double>*,
-						int, double**, double*, double*, unordered_map<string, double>*, unordered_map<string, double> *,
+						double*, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*), 
+						void (**eval_centroid)(int, int, unordered_map<string, double>**,
+						int, double**, double*, double*, unordered_map<string, double> **, unordered_map<string, double> *, 
 						double**, unordered_map<string, double>*))
 {
 	switch (dist_type){
@@ -120,7 +122,7 @@ void select_dists_cent(char dist_type,
 		case 's':
 			*distf = &symkl_distance;
 			*eval_centroid = &kl_centroid;
-			break;
+			break;			
 		case 'e': // fall through
 		default:
 			*distf = &euclidean_distance;
@@ -132,7 +134,7 @@ void select_dists_cent(char dist_type,
 
 
 /** EM clustering routine
- * This is an auxiliary routine, and it assumes that the memory for the
+ * This is an auxiliary routine, and it assumes that the memory for the 
  * necessary computations is already pre-allocated. This routine is called
  * from other routines. Calling routines can do a single clustering run
  *  or multiple runs with consensus clustering.
@@ -153,32 +155,29 @@ void select_dists_cent(char dist_type,
  * 		used in centroid calculation
  * distf = function for evaluating distance
  * eval_centroid = function for evaluating centroids
- *
- * Return value is the distortion (sum of the distances from each data
- * point to its corresponding centroid; in the case of the squared
+ * 
+ * Return value is the distortion (sum of the distances from each data 
+ * point to its corresponding centroid; in the case of the squared 
  * Euclidean distance it gives intra-cluster variance).
  */
 static double em_routine(int K, int N, int row_length, unordered_map<string, double>** freq,
-		unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1,
-		unordered_map<string, double>* expected_freq,
+		unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq,
 		int num_nt, double** freq_1, int* assignment, int* numMembers,
-		double** centroids, double** centroids_tilde, unordered_map<string, double>* tmp_data,
+		double** centroids, double** centroids_tilde, unordered_map<string, double>** tmp_data,
 		double**tmp_data_1, char dist_type,
 		int verbose=0, int allow_empty_clusters = 0)
-
 {
-	unordered_map<string, double> *tmp_qfreq = new unordered_map<string, double>[N];
+	unordered_map<string, double> **tmp_qfreq = new unordered_map<string, double>*[N];
 	double ** tmp_qfreq_1 = new double*[N];
 
-
+	
 	double distortion = 0;
 	initialize_cache(N);
 	// choose auxiliary functions
-	double (*distf)(double*, unordered_map<string, double>*, int,
-                    double*, unordered_map<string, double>*, unordered_map<string, double>*, unordered_map<string, double>*);
-	void (*eval_centroid)(int, int, unordered_map<string, double>*,
-                          int, double**, double*, double*, unordered_map<string, double>*, unordered_map<string, double> *,
-                          double**, unordered_map<string, double>*);
+	double (*distf)(double*, unordered_map<string, double>*, int, double*, unordered_map<string, double> *, unordered_map<string, double>*, unordered_map<string, double> *);
+	void (*eval_centroid)(int, int, unordered_map<string, double>**,
+						int, double**, double*, double*, unordered_map<string, double> **, unordered_map<string, double> *, 
+						double**, unordered_map<string, double>*);
 	select_dists_cent(dist_type, &distf, &eval_centroid);
 
 	while (true){ // repeat clustering attempts till we get a result
@@ -186,62 +185,69 @@ restart:
 		if (verbose > 0) {
 			cerr<<"\tEM routine: starting clustering attempt!"<<endl;
 		}
-
+		
 		memset(assignment, 0, N*sizeof(*assignment));
 		memset(numMembers, -1, K*sizeof(*numMembers));
-		// initial centroid assignment --- initialize with randomly chosen
+		// initial centroid assignment --- initialize with randomly chosen 
 		// freq items
 		for (int k=0; k<K; ++k) {
+		    //MODIFY
 		    int point_number = rand()% N;
-		    eval_centroid(1, row_length, freq[point_number], num_nt, freq_1 +
+		    int i=0;
+		    string key;
+		    for(auto iter = freq->begin(); iter != freq->end(); ++iter)
+		    {
+		        if (i==point_number){
+		            key = freq->first;
+		        } else
+		        {
+		            i++;
+		        }
+		    }
+            eval_centroid(1, row_length, freq->operator[](key), num_nt, freq_1 +
             point_number, centroids[k], centroids_tilde[k],
-            quality[point_number], expected_qual,
+            quality->operator[](key), expected_qual,
             quality_1 + point_number, expected_freq);
 			/*int point_number = rand()% N;
 			eval_centroid(1, row_length, freq + point_number, num_nt, freq_1 +
-			point_number, centroids[k], centroids_tilde[k],
-			quality + point_number, expected_qual,
+			point_number, centroids[k], centroids_tilde[k], 
+			quality + point_number, expected_qual, 
 			quality_1 + point_number, expected_freq);*/
 		}
-
-
+		
+		
 		// start iterations of EM clustering
 		while (true){
-			// compute the distances to the new centroids
+			// compute the distances to the new centroids 
 			// and compute the new assignments
-			bool assignmentChanged = false;  // set to true if
+			bool assignmentChanged = false;  // set to true if 
 			// at least one element changes its cluster assignment
-			int n=0;
-			for(auto iter = freq[n]->begin(); iter != freq[n]->end(); ++iter){ // update assignment of each element
-			    if (n<N) {
-                    int new_assignment = -1;  // new assignment
-                    double min_dist = -1;  // distance to the closest centroid
-                    // initial value set here is irrelevant as it
-                    // gets changed later
-                    for (int k = 0; k < K; k++) { // loop through centroids to
-                        // find the closest one
-                        if (!allow_empty_clusters || numMembers[k]) {
-                            // evaluate the distance; note the order of
-                            // arguments: centroid followed by freq --- it's
-                            // important for non-symmetric distances
-                            double dist = (*distf)(centroids[k], iter,
-                                                   row_length, centroids_tilde[k], quality->operator[](iter->first),
-                                                   expected_qual, expected_freq);
-                            if (new_assignment == -1 || dist < min_dist) {
-                                min_dist = dist;
-                                new_assignment = k;
-                            }
-                        }
-                    }
-                    // check for assignment change
-                    assignmentChanged = assignmentChanged || (assignment[n] != new_assignment);
-                    // update assignment
-                    assignment[n] = new_assignment;
-                    n++;
-                }
-			    else break;
+			for(auto iter = freq->begin(); iter != freq->end(); ++iter){ // update assignment of each element
+				int new_assignment=-1;  // new assignment
+				double min_dist=-1;  // distance to the closest centroid
+				// initial value set here is irrelevant as it 
+				// gets changed later
+				for(int k=0; k<K; k++){ // loop through centroids to 
+				// find the closest one
+					if (!allow_empty_clusters || numMembers[k]){
+						// evaluate the distance; note the order of 
+						// arguments: centroid followed by freq --- it's 
+						// important for non-symmetric distances
+						double dist = (*distf)(centroids[k], iter->second,
+							row_length, centroids_tilde[k], quality->operator[](iter->first),
+							expected_qual, expected_freq);
+						if (new_assignment==-1 || dist < min_dist) {
+							min_dist = dist;
+							new_assignment = k;
+						}
+					}
+				}
+				// check for assignment change
+				assignmentChanged = assignmentChanged || (assignment[n] != new_assignment);
+				// update assignment
+				assignment[n] = new_assignment;
 			}
-
+			
 			// evaluate the number of members in each cluster
 			memset(numMembers, 0, K*sizeof(*numMembers));
 			for(int n=0; n<N; n++){
@@ -262,11 +268,11 @@ restart:
 					}
 				}
 			}
-
+			
 			distortion = 0;
 			for (int n=0; n<N; n++) {
 				distortion += distf(centroids[assignment[n]], freq[n],
-				row_length, centroids_tilde[assignment[n]], quality[n],
+				row_length, centroids_tilde[assignment[n]], quality[n], 
 				expected_qual, expected_freq);
 			}
 			if (!assignmentChanged){
@@ -275,35 +281,40 @@ restart:
 					cerr<<"\tEM routine: attempt succeded"<<endl;
 				}
 				deallocate_cache();
-				delete[]tmp_qfreq;
+				tmp_qfreq.clear();
 				delete [] tmp_qfreq_1;
 				return distortion;
 			}
-
-			//If the number of iterations has excedeed a maximum, the
+			
+			//If the number of iterations has excedeed a maximum, the 
 			//algorithm stops and the best solution found is returned.
 			if (exceed_max_iterations(N, K, assignment, distortion)){
 				if (verbose > 0) {
 					cerr<<"\tEM routine: Cycling. Returning"<<endl;
 				}
 				deallocate_cache();
-                delete [] tmp_qfreq;
+				tmp_qfreq.clear();
 				delete [] tmp_qfreq_1;
 				return distortion;
-			}
+			}			
 
 			// evaluate the new centroids
 			for(int k=0; k<K; k++){
                 if(!allow_empty_clusters || numMembers[k]){
                     int elems_in_cluster = 0;
-                    for(auto iter = freq[k]->begin(); iter != freq[k]->end(); ++iter){
-                        if(assignment[elems_in_cluster] == k){
-                                tmp_data[elems_in_cluster].insert((make_pair(iter->first, iter->second)));
+                    int n=0;
+                    for(auto iter = freq->begin(); iter != freq->end(); ++iter){
+                        if (n<N){
+                            if(assignment[n] == k){
+                                tmp_data[elems_in_cluster] = iter->second;
                                 tmp_data_1[elems_in_cluster] = freq_1[n];
-                                tmp_qfreq[elems_in_cluster].insert((make_pair(iter->first, quality[k]->operator[](iter->first))));
+
+                                tmp_qfreq[elems_in_cluster] = quality->operator[](iter->first);
                                 tmp_qfreq_1[elems_in_cluster] = quality_1[n];
 
                                 elems_in_cluster++;
+                            n++;
+                            }
                         }
                     }
                     eval_centroid(elems_in_cluster, row_length, tmp_data,
@@ -319,10 +330,10 @@ restart:
 						if(assignment[n] == k){
 							tmp_data[elems_in_cluster] = freq[n];
 							tmp_data_1[elems_in_cluster] = freq_1[n];
-
+							
 							tmp_qfreq[elems_in_cluster] = quality[n];
 							tmp_qfreq_1[elems_in_cluster] = quality_1[n];
-
+							
 							elems_in_cluster++;
 						}
 					}
@@ -359,73 +370,65 @@ static int count_num_clusters(int const N, const int * assignment)
 	}
 	delete[] ix;
 
-	return num_clusters;
+	return num_clusters; 
 }
 
 
 // implementation of a publicly accessible function
-
-
-/*int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
-            unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
-            double** freq_1, int* assignment, double* Z, int num_trials,
-            char dist_type, int verbose)*/
-int hard_em(int K, int N, int row_length, unordered_map<string, double>** data,
-            unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual,
-            double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
-            double** data_1, int* assignment, double* Z, int num_trials,
-            char dist_type, int verbose)
+int hard_em(int K, int N, int row_length, unordered_map<string, double>** freq,
+    unordered_map<string, double>** quality, unordered_map<string, double>* expected_qual, double **quality_1, unordered_map<string, double>* expected_freq, int num_nt,
+    double** freq_1, int* assignment, double* Z, int num_trials=1,
+    char dist_type='e', int verbose=0)
 {
-    // Allocate matrices for centroids, distances, assignment and the
-    // vector for the number of members
-    double**  centroids = new double*[K];   //K=number of clusters
-    centroids[0] = new double[row_length*K];
-    for(int k=1; k<K; ++k) {
-        centroids[k] = centroids[0] + k*row_length;
-    } // K*row_length matrix for centroid locations
+	// Allocate matrices for centroids, distances, assignment and the 
+	// vector for the number of members
+	double**  centroids = new double*[K];   //K=number of clusters
+	centroids[0] = new double[row_length*K];
+	for(int k=1; k<K; ++k) {
+		centroids[k] = centroids[0] + k*row_length;
+	} // K*row_length matrix for centroid locations
 
-    double**  centroids_tilde = new double*[K];
-    centroids_tilde[0] = new double[row_length*K];
-    for(int k=1; k<K; ++k) {
-        centroids_tilde[k] = centroids_tilde[0] + k*row_length;
-    } // K*row_length matrix for X_tilde vars for centroids
+	double**  centroids_tilde = new double*[K];
+	centroids_tilde[0] = new double[row_length*K];
+	for(int k=1; k<K; ++k) {
+		centroids_tilde[k] = centroids_tilde[0] + k*row_length;
+	} // K*row_length matrix for X_tilde vars for centroids
 
-    int* tmp_assignment = new int[N];
-    int *numMembers = new int[K];  // number of members in each cluster
-    //unordered_map<string, double>** tmp_data = new unordered_map<string, double>*[N];
-    unordered_map<string,double>* tmp_data = new unordered_map<string,double>[N];
-    double** tmp_data_1 = new double*[N];
+	int* tmp_assignment = new int[N];
+	int *numMembers = new int[K];  // number of members in each cluster
+	unordered_map<string, double>** tmp_data = new unordered_map<string, double>*[N];
+	double** tmp_data_1 = new double*[N];
 
-    // call clustering routine
-    double min_distortion = 0;
-    for (int t=0; t<num_trials; t++) {
-        if (verbose > 0) {
-            cerr<<"Calling EM routine, attempt "<<t+1<<endl;
-        }
-        double distortion =	em_routine(K, N, row_length, data, quality,
-                                          expected_qual, quality_1, expected_freq, num_nt, data_1,
-                                          tmp_assignment, numMembers, centroids, centroids_tilde,
-                                          tmp_data, tmp_data_1, dist_type, verbose);
-        if (verbose > 0) {
-            cerr<<"Resulting distortion: "<<distortion<<endl;
-        }
-        if (!t || (distortion < min_distortion)) {
-            if (verbose > 0) {
-                cerr<<"Updating best partitioning and minimal distortion"<<endl;
-            }
-            min_distortion = distortion;
-            memcpy(assignment, tmp_assignment, N*sizeof(*assignment));
-        }
-    }
-    if (verbose > 0) {
-        cerr<<"Resulting minimal distortion: "<<min_distortion<<endl;
-    }
-    //evaluate confidence if using KL with raw counts
-    if (dist_type == 'k') {
-        eval_confidence(K, N, row_length, data, centroids, Z, quality, expected_qual, expected_freq);
-    }
-    // delete allocated arrays
-    delete[] centroids[0];
+	// call clustering routine
+	double min_distortion = 0;
+	for (int t=0; t<num_trials; t++) {
+		if (verbose > 0) {
+			cerr<<"Calling EM routine, attempt "<<t+1<<endl;
+		}
+		double distortion =	em_routine(K, N, row_length, freq, quality, 
+				expected_qual, quality_1, expected_freq, num_nt, freq_1,
+				tmp_assignment, numMembers, centroids, centroids_tilde,
+				tmp_data, tmp_data_1, dist_type, verbose);
+		if (verbose > 0) {
+			cerr<<"Resulting distortion: "<<distortion<<endl;
+		}
+		if (!t || (distortion < min_distortion)) {
+			if (verbose > 0) {
+				cerr<<"Updating best partitioning and minimal distortion"<<endl;
+			}
+			min_distortion = distortion;
+			memcpy(assignment, tmp_assignment, N*sizeof(*assignment));
+		}
+	}
+	if (verbose > 0) {
+		cerr<<"Resulting minimal distortion: "<<min_distortion<<endl;
+	}
+	//evaluate confidence if using KL with raw counts
+	if (dist_type == 'k') {
+		eval_confidence(K, N, row_length, freq, centroids, Z, quality, expected_qual, expected_freq);
+	}
+	// delete allocated arrays
+	delete[] centroids[0];
 	delete[] centroids;
 	delete[] centroids_tilde[0];
 	delete[] centroids_tilde;
