@@ -326,8 +326,8 @@ int main(int argc, char **argv)
 	}
 
 	// release memory previously allocated for frequency data
-	freq[0].clear();
-	freq->clear();
+	freq[0]->clear();
+    delete[] freq;
 	delete[] freq_1[0];
 	delete[] freq_1;
 	
@@ -337,10 +337,10 @@ int main(int argc, char **argv)
 	}
 	for(int i=0; i<L; i++)
 		avg_quality[i].clear();
-	quality->clear();
+    delete[] quality;
 	delete[] quality_1;
 	delete[] avg_quality_1;
-	avg_quality.clear();
+    delete[] avg_quality;
 	if (p_method==2 || p_method==3) expected_freq->clear();
 	if (e_method != 0) expected_qual->clear();
 

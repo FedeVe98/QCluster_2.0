@@ -7,12 +7,13 @@ using namespace std;
 
 
 double euclidean_distance(double *centroid, unordered_map<string, double>*y, int L, double* xt,
-						  unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
+                          unordered_map<string, double>* quality, unordered_map<string, double>*expected_qual,
+                          unordered_map<string, double> *expected_freq)
 {
 	double S = 0;
 	double z;
 	int i=0;
-    for(auto iter = quality[i].begin(); iter != quality[i].end(); ++iter){
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
         if (i<L){
             z = centroid[i] - iter->second;
             S += z*z;
@@ -28,22 +29,20 @@ double euclidean_distance(double *centroid, unordered_map<string, double>*y, int
 
 
 double kl_distance(double *centroid, unordered_map<string, double>*p, int L, double* centroid_tilde,
-				   unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
+                   unordered_map<string, double>* quality, unordered_map<string, double>*expected_qual,
+                   unordered_map<string, double> *expected_freq)
 {
 	double total_count = 0;
-    int i=0;
-    for(auto iter = quality[i].begin(); iter != quality[i].end(); ++iter){
-        if (i<L){
+
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
             total_count += iter->second;
-            i++;
-        }
     }
 	/*for(int i=0; i<L; ++i){
 		total_count += quality[i];
 	}*/
 	double S = 0;
     int j=0;
-    for(auto iter = quality[j].begin(); iter != quality[j].end(); ++iter){
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
         if (j<L){
             S += iter->second * log(iter->second/(total_count * centroid[j]));
             j++;
@@ -57,22 +56,19 @@ double kl_distance(double *centroid, unordered_map<string, double>*p, int L, dou
 
 
 double symkl_distance(double *centroid, unordered_map<string, double>*p, int L, double* centroid_tilde,
-                      unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
+                      unordered_map<string, double>* quality, unordered_map<string, double>*expected_qual,
+                      unordered_map<string, double> *expected_freq)
 {
 	double total_count = 0;
-    int i=0;
-    for(auto iter = quality[i].begin(); iter != quality[i].end(); ++iter){
-        if (i<L){
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
             total_count += iter->second;
-            i++;
-        }
     }
 	/*for(int i=0; i<L; ++i){
 		total_count += quality[i];
 	}*/
 	double S = 0;
     int j=0;
-    for(auto iter = quality[j].begin(); iter != quality[j].end(); ++iter){
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
         if (j<L){
             S += (iter->second - total_count*centroid[j]) * log(iter->second/(total_count * centroid[j]));
             j++;
@@ -86,11 +82,11 @@ double symkl_distance(double *centroid, unordered_map<string, double>*p, int L, 
 
 
 double d2_distance(double *centroid, unordered_map<string, double>*p, int L, double* centroid_tilde,
-                   unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
+                   unordered_map<string, double>* quality, unordered_map<string, double>*expected_qual,
+                   unordered_map<string, double> *expected_freq)
 {
 	double norm = 0;
 	double S = 0;
-    int i=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
         norm += iter->second * iter->second;
     }
@@ -98,7 +94,8 @@ double d2_distance(double *centroid, unordered_map<string, double>*p, int L, dou
 		norm += quality[i] * quality[i];
 	}*/
 	norm = sqrt(norm);
-    for(auto iter = quality[i].begin(); iter != quality[i].end(); ++iter){
+	int i=0;
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
         if (i<L){
             S += centroid[i] * iter->second / norm;
             i++;
@@ -112,24 +109,21 @@ double d2_distance(double *centroid, unordered_map<string, double>*p, int L, dou
 
 
 double chi2_distance(double *centroid, unordered_map<string, double>*p, int L, double* centroid_tilde,
-                    unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
+                     unordered_map<string, double>* quality, unordered_map<string, double>*expected_qual,
+                     unordered_map<string, double> *expected_freq)
 {
 	double chi2 = 0;
 	double total_count = 0;
-	int i=0;
-    for(auto iter = quality[i].begin(); iter != quality[i].end(); ++iter){
-        if (i<L){
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
             total_count += iter->second;
-            i++;
-        }
     }
 	/*for(int i=0; i<L; i++){
 		total_count += quality[i];
 	}*/
     int j=0;
-    for(auto iter = quality[j].begin(); iter != quality[j].end(); ++iter){
+    for(auto iter = quality->begin(); iter != quality->end(); ++iter){
         if (j<L){
-            double exp_count = centroid[i] * total_count;
+            double exp_count = centroid[j] * total_count;
             chi2 += (iter->second - exp_count) * (iter->second - exp_count) / exp_count;
             j++;
         }
@@ -143,27 +137,20 @@ double chi2_distance(double *centroid, unordered_map<string, double>*p, int L, d
 }
 
 double d2ast_distance(double *centroid, unordered_map<string, double>*p, int L, double* centroid_tilde,
-                       unordered_map<string, double>*quality, unordered_map<string, double>*expected_qual, unordered_map<string, double> *expected_freq)
+                      unordered_map<string, double>* quality, unordered_map<string, double>*expected_qual,
+                      unordered_map<string, double> *expected_freq)
 {
-	//Determines what data to use: global(expected_freq) or local(centroid)
-    unordered_map<string, double>* exp_freq;
-    if (expected_freq == NULL) exp_freq = centroid;
-    else { exp_freq = expected_freq; }
-	
-	double x[L];
-	memcpy(x, quality, L*sizeof(*quality));
-	double total_count = 0;
-	int j=0;
-    for(auto iter = p[j].begin(); iter != p[j].end(); ++iter){
-        if (j<L){
+    //Determines what data to use: global(expected_freq) or local(centroid)
+    double * exp_freq;
+    if (expected_freq==NULL) exp_freq = centroid;
+    else exp_freq = expected_freq;
+    double x[L];
+    memcpy(x, quality, L*sizeof(*quality));
+    double total_count = 0;
+    for(auto iter = p->begin(); iter != p->end(); ++iter){
             total_count += iter->second;
-            j++;
-        }
     }
-	/*for(int i=0; i<L; i++){
-		total_count += p[i];
-	}*/
-	double S = 0;
+    double S = 0;
     int i=0;
     for(auto iter = expected_qual[i].begin(); iter != expected_qual[i].end(); ++iter){
         if (i<L){
@@ -173,19 +160,14 @@ double d2ast_distance(double *centroid, unordered_map<string, double>*p, int L, 
             i++;
         }
     }
-	/*for(int l=0; l<L; ++l){
-		x[l] -= total_count * exp_freq[l] * expected_qual[l];
-		x[l] /= sqrt(exp_freq[l] * expected_qual[l]);
-		S += x[l] * x[l];
-	}*/
-	S = sqrt(S);
-	for(int l=0; l<L; ++l){
-		x[l] /= S;
-	}	
-	S = 0;
-	for(int l=0; l<L; ++l){
-		S += x[l] * centroid_tilde[l];
-	}
-	return (1-S)/2;
+    S = sqrt(S);
+    for(int l=0; l<L; ++l){
+        x[l] /= S;
+    }
+    S = 0;
+    for(int l=0; l<L; ++l){
+        S += x[l] * centroid_tilde[l];
+    }
+    return (1-S)/2;
 }
 
