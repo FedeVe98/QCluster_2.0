@@ -136,7 +136,6 @@ void d2ast_centroid(int N, int row_length,  unordered_map<string, double>** freq
 				total_count += freq[n]->operator[](iter->first);
 			}
 		}
-		
 	}
 	
 	//Determines what data to use: global(expected_freq) or local(centroid)

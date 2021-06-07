@@ -12,13 +12,9 @@ double euclidean_distance(unordered_map<string, double> *centroid, unordered_map
 {
 	double S = 0;
 	double z;
-	//int i=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
-        //if (i<L){
             z = centroid->operator[](iter->first) - iter->second;
             S += z*z;
-            //i++;
-        //}
     }
 	return S;
 }
@@ -33,12 +29,8 @@ double kl_distance(unordered_map<string, double> *centroid, unordered_map<string
             total_count += iter->second;
     }
 	double S = 0;
-    //int j=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
-        //if (j<L){
             S += iter->second * log(iter->second/(total_count * centroid->operator[](iter->first)));
-            //j++;
-        //}
     }
 	return S;
 }
@@ -53,12 +45,8 @@ double symkl_distance(unordered_map<string, double> *centroid, unordered_map<str
         total_count += iter->second;
     }
 	double S = 0;
-    //int j=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
-        //if (j<L){
             S += (iter->second - total_count*centroid->operator[](iter->first) * log(iter->second/(total_count * centroid->operator[](iter->first))));
-            //j++;
-        //}
     }
 	return S;
 }
@@ -76,10 +64,7 @@ double d2_distance(unordered_map<string, double> *centroid, unordered_map<string
 	norm = sqrt(norm);
 	//int i=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
-        //if (i<L){
-            S += centroid->operator[](iter->first) * iter->second / norm;
-            //i++;
-        //}
+            S += (centroid->operator[](iter->first) * iter->second )/ norm;
     }
 	return 1 - S;
 }
@@ -94,13 +79,9 @@ double chi2_distance(unordered_map<string, double> *centroid, unordered_map<stri
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
             total_count += iter->second;
     }
-    //int j=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
-        //if (j<L){
             double exp_count = centroid->operator[](iter->first) * total_count;
             chi2 += (iter->second - exp_count) * (iter->second - exp_count) / exp_count;
-            //j++;
-        //}
     }
 	//return (chi2 - (L-3) * log(chi2))/2;
 	return chi2;
@@ -126,14 +107,10 @@ double d2ast_distance(unordered_map<string, double> *centroid, unordered_map<str
     for(auto iter = p->begin(); iter != p->end(); ++iter){
         total_count += iter->second;
     }
-    int i=0;
     for(auto iter = expected_qual[i].begin(); iter != expected_qual[i].end(); ++iter){
-        if (i<L){
             x->at(iter->first) -= total_count * exp_freq->operator[](iter->first) * iter->second;
             x->at(iter->first) /= sqrt(exp_freq->operator[](iter->first) * iter->second );
             S += x->operator[](iter->first) * x->operator[](iter->first);
-            i++;
-        }
     }
     S = sqrt(S);
     for(auto iter = x->begin(); iter != x->end(); ++iter){
