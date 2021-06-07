@@ -129,6 +129,9 @@ double d2ast_distance(unordered_map<string, double> *centroid, unordered_map<str
     int i=0;
     for(auto iter = expected_qual[i].begin(); iter != expected_qual[i].end(); ++iter){
         if (i<L){
+    for(int i=0; i<L; i++)
+    {
+        for(auto iter = expected_qual[i].begin(); iter != expected_qual[i].end(); ++iter){
             x->at(iter->first) -= total_count * exp_freq->operator[](iter->first) * iter->second;
             x->at(iter->first) /= sqrt(exp_freq->operator[](iter->first) * iter->second );
             S += x->operator[](iter->first) * x->operator[](iter->first);

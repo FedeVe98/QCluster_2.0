@@ -163,8 +163,7 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                          double **quality_1, unordered_map<string, double>* expected_freq,int num_nt, double** freq_1,
                          int* assignment, int* numMembers, unordered_map<string, double>** centroids, unordered_map<string,
                          double>** centroids_tilde, unordered_map<string, double>** tmp_data, double**tmp_data_1,
-                         char dist_type, int verbose=0, int allow_empty_clusters = 0)
-
+                         char dist_type, int verbose=0, int allow_empty_clusters = 1)
 {
     unordered_map<string, double> **tmp_qfreq = new unordered_map<string, double>*[N];
     double ** tmp_qfreq_1 = new double*[N];

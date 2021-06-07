@@ -172,7 +172,7 @@ int main(int argc, char **argv)
 	// initialize random number generator
 	srand(random_seed);
 	// initialize constants
-	int L = 0; // length of the freq. vector L = NUM_NT**K
+	int L = 1; // length of the freq. vector L = NUM_NT**K
 	for(int k=0; k<K; ++k){
 		L *= NUM_NT;
 	}
