@@ -10,7 +10,7 @@ void mean_centroid(int N, int row_length,  unordered_map<string, double>** freq,
                    unordered_map<string, double>**quality,  unordered_map<string, double>*expected_qual, double **quality_1,
                    unordered_map<string, double>*expected_freq)
 {
-	for(int n=0; n<N; n++){
+	for(int n=0; n<N; n++){		
 		for(auto iter = quality[n]->begin(); iter != quality[n]->end(); ++iter){
 			if(centroid->find(iter->first) == centroid->end())
 				centroid->insert(make_pair(iter->first, iter->second));
@@ -20,6 +20,7 @@ void mean_centroid(int N, int row_length,  unordered_map<string, double>** freq,
 	}
 	for(auto iter = centroid->begin(); iter != centroid->end(); ++iter)
 		centroid->at(iter->first) /= N;
+		
 	return;
 }
 

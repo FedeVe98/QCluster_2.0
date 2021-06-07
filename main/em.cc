@@ -190,6 +190,7 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
 
         memset(assignment, 0, N*sizeof(*assignment));
         memset(numMembers, -1, K*sizeof(*numMembers));
+        
         // initial centroid assignment --- initialize with randomly chosen
         // freq items
         for (int k=0; k<K; ++k) {
@@ -347,11 +348,9 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** data,
     // Allocate matrices for centroids, distances, assignment and the
     // vector for the number of members
     unordered_map<string, double>**  centroids = new unordered_map<string, double>*[K];   //K=number of clusters
-    for(int k=1; k<K; ++k) {
-        centroids[k] = centroids[0] + k*row_length;
-    }
-
+    for (int i=0; i<K; i++) centroids[i] = new unordered_map<string, double>;
     unordered_map<string, double>**  centroids_tilde = new unordered_map<string, double>*[K];
+    for (int i=0; i<K; i++) centroids_tilde[i] = new unordered_map<string, double>;
     int* tmp_assignment = new int[N];
     int *numMembers = new int[K];  // number of members in each cluster
     unordered_map<string,double>** tmp_data = new unordered_map<string,double>*[N];
