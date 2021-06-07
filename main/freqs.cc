@@ -153,16 +153,6 @@ void fill_overlap_count_vector_1(string seq, string seq_qual, int K,
 			avg_quality_1[kmer[0]] += qual[0];
 	}
 
-	/*** PRINTING FREQ_1 TEST ***/
-	/*int count = 0;
-	for(int i = 0; i < L; i++)
-	{
-		cout << freq_1[i] << endl;
-		count++;
-
-		if(count>10)	continue;
-	}*/
-
 	delete[] kmer;
 	delete[] qual;
 	delete[] prob;
@@ -216,11 +206,15 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 		}
 		if (!valid_kmer) continue;
 		//insert into freq data structure
-		if(freq->find(kmer_string) == freq->end())
-			freq->insert(make_pair(kmer_string, pc));
-		else
-			freq->operator[](kmer_string) += 1;
-		quality_vector->operator[](kmer_string) += readqual;
+		if(freq->find(kmer_string) == freq->end()) {
+            freq->insert(make_pair(kmer_string, pc));
+            quality_vector->insert(make_pair(kmer_string, readqual));;
+        }
+		else {
+            freq->operator[](kmer_string) += 1;
+            quality_vector->operator[](kmer_string) += readqual;
+        }
+
 
 		if (avg_quality != NULL)
 		{
@@ -283,16 +277,6 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 		default:
 			break;
 	}
-
-	/*** PRINTING FREQ_1 TEST ***/
-	/*int count = 0;
-	for(auto iter = freq->begin(); iter != freq->end(); ++iter)
-	{
-		cout << iter->first << "  " << iter->second << endl;
-		count++;
-
-		if(count>10)	continue;
-	}*/
 	
 	delete[] kmer;
 	delete[] qual;
