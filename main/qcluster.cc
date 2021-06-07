@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 						freq_1, avg_quality_1, avg_quality, expected_qual_1, expected_qual);
 	}
 
-	/*** PRINTING FREQ TEST ***/
+	/*** PRINT TEST ***/
 	/*int count = 0;
 	for(int i=0; i < L; i++)
 	{
@@ -295,21 +295,18 @@ int main(int argc, char **argv)
 
 	//RELEASE MEMORY
 	// release memory previously allocated for frequency data
-	freq[0]->clear();
     delete[] freq;
 	delete[] freq_1[0];
 	delete[] freq_1;
 	
 	for(int i=0; i<N; i++) {
-		quality[i]->clear();
 		delete[] quality_1[i];
 	}
-	for(int i=0; i<L; i++)
-		avg_quality[i].clear();
+	avg_quality->clear();
     delete[] quality;
 	delete[] quality_1;
 	delete[] avg_quality_1;
-    delete[] avg_quality;
+    avg_quality->clear();
 	if (p_method==2 || p_method==3) expected_freq->clear();
 	if (e_method != 0) expected_qual->clear();
 

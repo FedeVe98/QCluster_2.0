@@ -275,6 +275,8 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                 return distortion;
             }
 
+            
+
             //If the number of iterations has excedeed a maximum, the
             //algorithm stops and the best solution found is returned.
             if (exceed_max_iterations(N, K, assignment, distortion)){
@@ -384,15 +386,15 @@ int hard_em(int K, int N, int row_length, unordered_map<string, double>** data,
     if (dist_type == 'k') {
         eval_confidence(K, N, row_length, data, centroids, Z, quality, expected_qual, expected_freq);
     }
+
     // delete allocated arrays
-    delete[] centroids[0];
     delete[] centroids;
-    delete[] centroids_tilde[0];
     delete[] centroids_tilde;
     delete[] numMembers;
     delete[] tmp_data;
     delete[] tmp_data_1;
     delete[] tmp_assignment;
+
     // return the number of clusters
     return count_num_clusters(N, assignment);
 }
