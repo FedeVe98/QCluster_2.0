@@ -188,6 +188,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 		for (int i=0; i<NUM_NT; i++) somma += freq_1[i];
 		for (int i=0; i<NUM_NT; i++) freq_bases[i] = freq_1[i]/somma;
 	}
+
 	for (int i=0; i<L-K+1; i++){
 		valid_kmer = true;
 		readqual = 1;
@@ -203,18 +204,23 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 			qual[j] = int(seq_qual[i+j])-base;
 			prob[j] = (1.0 - pow(10.0,-(qual[j])/10.0));
 			readqual *= prob[j];
+			
 		}
 		if (!valid_kmer) continue;
 		//insert into freq data structure
 		if(freq->find(kmer_string) == freq->end()) {
             freq->insert(make_pair(kmer_string, pc));
-            quality_vector->insert(make_pair(kmer_string, readqual));;
         }
 		else {
             freq->operator[](kmer_string) += 1;
-            quality_vector->operator[](kmer_string) += readqual;
         }
 
+		if(quality_vector->find(kmer_string) == quality_vector->end()) {
+            quality_vector->insert(make_pair(kmer_string, readqual));
+        }
+		else {
+            quality_vector->operator[](kmer_string) += readqual;
+        }
 
 		if (avg_quality != NULL)
 		{
@@ -222,7 +228,6 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 			{
 				double temp_array[NUM_NT] = {};
 				avg_quality->insert(make_pair(kmer_string, &temp_array[0]));
-
 			}
 
 			for (int j=0; j<K; j++) avg_quality->operator[](kmer_string)[kmer[j]] += qual[j];
@@ -231,7 +236,6 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 		if (!redistribute) continue;
 
 		//Redistributing quality: for each letter in the kmer...
-		kmer_string="";
 		for (int j=0; j<K; j++){
 			int original_letter = kmer[j];
 			double original_prob = prob[j];
@@ -245,6 +249,7 @@ void fill_overlap_count_vector(string seq, string seq_qual, int K,
 				//Recalculation of the new kmer probability
 				readqual = 1;
 				index_kmer = 0;
+				kmer_string = "";
 				for (int f=0; f<K; f++){
 					readqual *= prob[j];
 					char tmp = int2nt(kmer[j]);

@@ -107,11 +107,15 @@ double d2ast_distance(unordered_map<string, double> *centroid, unordered_map<str
     for(auto iter = p->begin(); iter != p->end(); ++iter){
         total_count += iter->second;
     }
-    for(auto iter = expected_qual[i].begin(); iter != expected_qual[i].end(); ++iter){
+    for(int i=0; i<L; i++)
+    {
+        for(auto iter = expected_qual[i].begin(); iter != expected_qual[i].end(); ++iter){
             x->at(iter->first) -= total_count * exp_freq->operator[](iter->first) * iter->second;
             x->at(iter->first) /= sqrt(exp_freq->operator[](iter->first) * iter->second );
             S += x->operator[](iter->first) * x->operator[](iter->first);
+        }
     }
+    
     S = sqrt(S);
     for(auto iter = x->begin(); iter != x->end(); ++iter){
         x->at(iter->first) /= S;

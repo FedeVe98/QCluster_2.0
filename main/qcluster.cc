@@ -190,10 +190,8 @@ int main(int argc, char **argv)
 	// Frequencies and quality of each kmer in all the input sequences; initialization
 	//Sequence** -> kmers* -> freq per kmer
 	unordered_map<string, double> **freq = new unordered_map<string, double>*[N];
-	freq[0] = new unordered_map<string, double>;
 	//Sequence** -> kmers* -> quality
 	unordered_map<string, double> **quality = new unordered_map<string, double>*[N];
-	for (int i=0; i<N; i++) quality[i] = new unordered_map<string, double>;
 
     // Frequencies and quality of each nucleotide in all the kmers; initialization
 	double **freq_1  = new double*[N];
@@ -214,12 +212,14 @@ int main(int argc, char **argv)
 		SeqRecord rec = rec_gen.next();
 		string seq = rc_flag ? rec.seq() + rec.rc().seq() : rec.seq();
 		freq[i] = new unordered_map<string, double>;
+		quality[i] = new unordered_map<string, double>;
 
 		//Calculate frequencies of individual bases
 		freq_1[i] = freq_1[0] + i*NUM_NT;
 		fill_overlap_count_vector_1(seq, rec.qual(), 1, freq_1[i], 
 								  quality_1[i], false, pseudocount, 
 								  avg_quality_1, false);
+
 		//Calculate frequencies of kmers
 		fill_overlap_count_vector(seq, rec.qual(), K, freq[i], quality[i],
 								normalize, pseudocount, avg_quality, 
@@ -237,19 +237,6 @@ int main(int argc, char **argv)
 		calculate_quality_expected_value(e_method, N, K, L, freq, quality,
 						freq_1, avg_quality_1, avg_quality, expected_qual_1, expected_qual);
 	}
-
-	/*** PRINT TEST ***/
-	/*int count = 0;
-	for(int i=0; i < L; i++)
-	{
-		for(auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
-		{
-			cout << iter->first << "  " << iter->second << endl;
-			count++;
-
-			if(count>5)	continue;
-		}
-	}*/
 
 	
 	//Expected frequency of each kmer
