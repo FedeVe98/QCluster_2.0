@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cmath>
 #include <unordered_map>
+#include <time.h>
 #include "seqio.hh"
 #include "freqs.hh"
 #include "em.hh"
@@ -185,7 +186,8 @@ int main(int argc, char **argv)
 	//INPUT
 	// read sequences and build count matrix
 	RecordGenerator rec_gen(fastq_file_name);
-
+    cerr<<"Inizia l'operazione di inizializzazione...";
+    clock_t starta=clock();
 	//DATA STRUCTURES
 	// Frequencies and quality of each kmer in all the input sequences; initialization
 	//Sequence** -> kmers* -> freq per kmer
@@ -205,9 +207,14 @@ int main(int argc, char **argv)
 	for(int i=0; i<NUM_NT; i++) avg_quality_1[i] = 0;
 	//kmers
 	unordered_map<string, double*> *avg_quality = new unordered_map<string, double*>;
+    clock_t enda=clock();
+    double tempoa =((double)(enda-starta))/CLOCKS_PER_SEC;
+    cerr<<"Tempo trascorso: "<<tempoa<<" secondi.";
 
 	//ALGORITHM
 	//For each read we count the number of kmers
+    cerr<<"Inizia l'operazione di inserimento...";
+    clock_t startb=clock();
 	for(int i=0; i<N; ++i){
 		SeqRecord rec = rec_gen.next();
 		string seq = rc_flag ? rec.seq() + rec.rc().seq() : rec.seq();
@@ -225,11 +232,17 @@ int main(int argc, char **argv)
 								normalize, pseudocount, avg_quality, 
 								freq_1[i], redistribute);
 	}
-	if (verbose_level>0){
+    clock_t endb=clock();
+    double tempob =((double)(endb-startb))/CLOCKS_PER_SEC;
+    cerr<<"Tempo trascorso: "<<tempob<<" secondi.";
+
+    if (verbose_level>0){
 		cerr<<"Read counts calculated\n";
 	}
 
 	//Compute the expected quality of each kmer
+    cerr<<"Inizia l'operazione di expected qual and freq...";
+    clock_t startc=clock();
 	double *expected_qual_1 = NULL;
 	unordered_map<string, double> *expected_qual = new unordered_map<string, double>();
 	if (e_method != 0) {
@@ -255,6 +268,9 @@ int main(int argc, char **argv)
 		expected_freq_1 = new double[L];
 		expected_frequency_p2global(N, K, L, expected_freq_1, freq_1);
 	}
+    clock_t endc=clock();
+    double tempoc =((double)(endc-startc))/CLOCKS_PER_SEC;
+    cerr<<"Tempo trascorso: "<<tempoc<<" secondi.";
 
 	// whiten if requested; in this case reset the distance to euclidean L2
 	if (normalize_matrix_flag){
@@ -264,6 +280,29 @@ int main(int argc, char **argv)
 	if (verbose_level > 0){
 		cerr<<"Word frequencies calculated\n";
 	}
+
+    double count = 0;
+    cerr<<"\n size ----------------------\n";
+    cerr<< "point "<< sizeof(freq) <<"\n";
+    for (int i=0; i<N; i++)
+        for (auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
+            count=count + sizeof(iter->first) + sizeof(iter->second);
+    cerr<< "freq "<< count <<"\n";
+    double countA = 0;
+    for (int i=0; i<N; i++)
+        for (auto iter = quality[i]->begin(); iter != quality[i]->end(); ++iter)
+            countA=countA + sizeof(iter);
+    cerr<< "quality "<< countA<<"\n";
+    double countB = 0;
+    for (int i=0; i<N; i++)
+        for (int j=0; j<NUM_NT; j++)
+            countB=countB + sizeof(freq_1[i][j]);
+    cerr<< "freq_1 "<< countB <<"\n";
+    double countC = 0;
+    for (int i=0; i<N; i++)
+        for (int j=0; j<NUM_NT; j++)
+            countC=countC + sizeof(quality_1[i][j]);
+    cerr<< "quality_1 "<< countC <<"\n";
 
 	// hard EM clustering
 	int* assignment = new int[N];
