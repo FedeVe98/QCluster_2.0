@@ -186,7 +186,6 @@ int main(int argc, char **argv)
 	//INPUT
 	// read sequences and build count matrix
 	RecordGenerator rec_gen(fastq_file_name);
-    cerr<<"Inizia l'operazione di inizializzazione...";
     clock_t starta=clock();
 	//DATA STRUCTURES
 	// Frequencies and quality of each kmer in all the input sequences; initialization
@@ -209,11 +208,10 @@ int main(int argc, char **argv)
 	unordered_map<string, double*> *avg_quality = new unordered_map<string, double*>;
     clock_t enda=clock();
     double tempoa =((double)(enda-starta))/CLOCKS_PER_SEC;
-    cerr<<"Tempo trascorso: "<<tempoa<<" secondi.";
+    cerr<<"Initialization: "<<tempoa<<" seconds\n";
 
 	//ALGORITHM
 	//For each read we count the number of kmers
-    cerr<<"Inizia l'operazione di inserimento...";
     clock_t startb=clock();
 	for(int i=0; i<N; ++i){
 		SeqRecord rec = rec_gen.next();
@@ -234,14 +232,13 @@ int main(int argc, char **argv)
 	}
     clock_t endb=clock();
     double tempob =((double)(endb-startb))/CLOCKS_PER_SEC;
-    cerr<<"Tempo trascorso: "<<tempob<<" secondi.";
+    cerr<<"Insertion: "<<tempob<<" seconds\n";
 
     if (verbose_level>0){
 		cerr<<"Read counts calculated\n";
 	}
 
 	//Compute the expected quality of each kmer
-    cerr<<"Inizia l'operazione di expected qual and freq...";
     clock_t startc=clock();
 	double *expected_qual_1 = NULL;
 	unordered_map<string, double> *expected_qual = new unordered_map<string, double>();
@@ -270,7 +267,7 @@ int main(int argc, char **argv)
 	}
     clock_t endc=clock();
     double tempoc =((double)(endc-startc))/CLOCKS_PER_SEC;
-    cerr<<"Tempo trascorso: "<<tempoc<<" secondi.";
+    cerr<<"Expected qual and freq: "<<tempoc<<" seconds\n";
 
 	// whiten if requested; in this case reset the distance to euclidean L2
 	if (normalize_matrix_flag){
@@ -283,26 +280,25 @@ int main(int argc, char **argv)
 
     double count = 0;
     cerr<<"\n size ----------------------\n";
-    cerr<< "point "<< sizeof(freq) <<"\n";
     for (int i=0; i<N; i++)
         for (auto iter = freq[i]->begin(); iter != freq[i]->end(); ++iter)
             count=count + sizeof(iter->first) + sizeof(iter->second);
-    cerr<< "freq "<< count <<"\n";
+    cerr<< "freq   "<< count <<"\n";
     double countA = 0;
     for (int i=0; i<N; i++)
         for (auto iter = quality[i]->begin(); iter != quality[i]->end(); ++iter)
-            countA=countA + sizeof(iter);
-    cerr<< "quality "<< countA<<"\n";
+            countA=countA + sizeof(iter->first) + sizeof(iter->second);
+    cerr<< "quality   "<< countA<<"\n";
     double countB = 0;
     for (int i=0; i<N; i++)
         for (int j=0; j<NUM_NT; j++)
             countB=countB + sizeof(freq_1[i][j]);
-    cerr<< "freq_1 "<< countB <<"\n";
+    cerr<< "freq_1  "<< countB <<"\n";
     double countC = 0;
     for (int i=0; i<N; i++)
         for (int j=0; j<NUM_NT; j++)
             countC=countC + sizeof(quality_1[i][j]);
-    cerr<< "quality_1 "<< countC <<"\n";
+    cerr<< "quality_1   "<< countC <<"\n";
 
 	// hard EM clustering
 	int* assignment = new int[N];

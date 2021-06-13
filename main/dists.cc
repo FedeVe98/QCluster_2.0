@@ -62,7 +62,6 @@ double d2_distance(unordered_map<string, double> *centroid, unordered_map<string
         norm += iter->second * iter->second;
     }
 	norm = sqrt(norm);
-	//int i=0;
     for(auto iter = quality->begin(); iter != quality->end(); ++iter){
             S += (centroid->operator[](iter->first) * iter->second )/ norm;
     }

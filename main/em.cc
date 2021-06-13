@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
+#include <time.h>
 using namespace std;
 
 //global variables
@@ -178,8 +179,11 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                           unordered_map<string, double>*, unordered_map<string, double>*,
                           unordered_map<string, double>**, unordered_map<string, double> *,
                           double**, unordered_map<string, double>*);
-
+    clock_t starte=clock();
     select_dists_cent(dist_type, &distf, &eval_centroid);
+    clock_t ende = clock();
+    double tempoe =((double)(ende-starte))/CLOCKS_PER_SEC;
+    cerr<<"Distances: "<<tempoe<<" seconds\n";
 
     while (true){ // repeat clustering attempts till we get a result
         restart:
@@ -277,7 +281,7 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
             
 
             //If the number of iterations has excedeed a maximum, the
-            //algorithm stops and the best solution found is returned.
+            //algorithm stops and the best solution found is returned
             if (exceed_max_iterations(N, K, assignment, distortion)){
                 if (verbose > 0) {
                     cerr<<"\tEM routine: Cycling. Returning"<<endl;
@@ -287,7 +291,7 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                 delete [] tmp_qfreq_1;
                 return distortion;
             }
-
+            clock_t startd=clock();
             // evaluate the new centroids
             for(int k=0; k<K; k++){
                 if(!allow_empty_clusters || numMembers[k]){
@@ -307,6 +311,9 @@ static double em_routine(int K, int N, int row_length, unordered_map<string, dou
                                   tmp_qfreq, expected_qual, tmp_qfreq_1,expected_freq);
                 }
             }
+            clock_t endd=clock();
+            double tempod =((double)(endd-startd))/CLOCKS_PER_SEC;
+            cerr<<"Evaluation centrois: "<<tempod<<" seconds\n";
         }
     }
 }
